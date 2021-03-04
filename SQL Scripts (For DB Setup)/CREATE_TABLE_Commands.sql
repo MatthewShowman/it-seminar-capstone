@@ -21,7 +21,7 @@ CREATE TABLE Item (
     BrandID INT FOREIGN KEY REFERENCES Brand(BrandID)
 )
 
-CREATE TABLE Dates (
+CREATE TABLE WM_Date (
     WMWeek CHAR(6) PRIMARY KEY,
     WeekStart DATETIME NOT NULL,
     FiscalYear CHAR(4) NOT NULL,
@@ -29,8 +29,24 @@ CREATE TABLE Dates (
     Season NVARCHAR(25) NOT NULL
 )
 
+CREATE TABLE Forecast_Profile (
+    ProfileID INT IDENTITY PRIMARY KEY,
+    ProfileName NVARCHAR(25) NOT NULL,
+    Multiplier DECIMAL(5,2) NOT NULL DEFAULT 1,
+    IsDefaultProfile BINARY NOT NULL,
+    LeadTime INT NOT NULL
+)
+
+CREATE TABLE Use_Profile (
+    ItemID INT FOREIGN KEY REFERENCES Item(ItemID),
+    ProfileID INT FOREIGN KEY REFERENCES Forecast_Profile(ProfileID),
+    StartWeek CHAR(6) FOREIGN KEY REFERENCES Dates(WMWeek),
+    FinalWeek CHAR(6) FOREIGN KEY REFERENCES Dates(WMWeek),
+    PRIMARY KEY (ItemID, StartWeek, FinalWeek)
+)
+
 CREATE TABLE Historical (
-    WMWeek CHAR(6) FOREIGN KEY REFERENCES Dates(WMWeek),
+    WMWeek CHAR(6) FOREIGN KEY REFERENCES WM_Date(WMWeek),
     ItemID INT FOREIGN KEY REFERENCES Item(ItemID),
     UnitCost DECIMAL(10,2) NOT NULL,
     StoreCount INT NOT NULL,

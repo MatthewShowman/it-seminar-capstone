@@ -17,7 +17,7 @@ VALUES
     ('Cleaner Specialty Foaming Spray 16oz', '132294', 16, 'Spray', 'Cleaner', 1),
     ('Cleaner Specialty Liquid 21oz', '737915', 21, 'Liquid', 'Cleaner', 1);
 
-INSERT INTO Dates (WMWeek, FiscalYear, WeekStart, Month, Season)
+INSERT INTO WM_Date (WMWeek, FiscalYear, WeekStart, Month, Season)
 VALUES
     ('201901','2019','1/26/2019','Jan','Winter'),
     ('201902','2019','2/2/2019','Feb','Winter'),
