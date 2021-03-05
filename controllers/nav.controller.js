@@ -5,7 +5,7 @@ const config = require('../mssql.utils');
 async function getClientList(){
     try {
         let pool = await sql.connect(config);
-        let items = await pool.request().query('USE TestDB SELECT ClientID, ClientName FROM Client ORDER BY ClientName')
+        let items = await pool.request().query('SELECT ClientID, ClientName FROM Client ORDER BY ClientName')
         return items.recordsets;
     }
     catch (error) {
@@ -19,7 +19,7 @@ async function getBrandList(ClientID){
         let pool = await sql.connect(config);
         let items = await pool.request()
             .input('IdParam', sql.Int, ClientID)
-            .query('USE TestDB SELECT BrandID, Brand FROM Brand WHERE ClientID = @IDParam ORDER BY Brand')
+            .query('SELECT BrandID, Brand FROM Brand WHERE ClientID = @IDParam ORDER BY Brand')
         return items.recordsets;
     }
     catch (error) {
@@ -33,7 +33,7 @@ async function getProductList(BrandID){
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, BrandID)
-            .query('USE TestDB SELECT ItemID, Alias, SizeOZ, Sku FROM Item WHERE BrandID = @IdParam ORDER BY Alias');
+            .query('SELECT ItemID, Alias, SizeOZ, Sku FROM Item WHERE BrandID = @IdParam ORDER BY Alias');
         return item.recordsets;
     }
     catch (error) {
