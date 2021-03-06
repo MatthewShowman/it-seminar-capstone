@@ -28,7 +28,7 @@ CREATE TABLE WM_Date
 (
     WMWeek CHAR(6) PRIMARY KEY,
     WeekStart DATETIME NOT NULL,
-    CalYear CHAR(4) NOT NULL,
+    WMYear CHAR(4) NOT NULL, -- This will need to be the identifier to get the 52-week year, so specify it's a WM year.
     Month NVARCHAR(20) NOT NULL,
     Season NVARCHAR(25) NOT NULL
 )

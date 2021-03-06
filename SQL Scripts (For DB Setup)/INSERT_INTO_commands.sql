@@ -31,7 +31,7 @@ VALUES
 ('Cleaner Specialty Liquid 21oz', 6.07, 5, 'YES', 6, 1, 1, 'NO');
 
 INSERT INTO WM_Date
-    (WMWeek, CalYear, WeekStart, Month, Season)
+    (WMWeek, WMYear, WeekStart, Month, Season)
 VALUES
     ('201901', '2019', '1/26/2019', 'Jan', 'Winter'),
     ('201902', '2019', '2/2/2019', 'Feb', 'Winter'),
@@ -133,10 +133,10 @@ VALUES
     ('202146', '2021', '12/11/2021', 'Dec', 'Winter'),
     ('202147', '2021', '12/18/2021', 'Dec', 'Winter'),
     ('202148', '2021', '12/25/2021', 'Dec', 'Winter'),
-    ('202149', '2022', '1/1/2022', 'Jan', 'Winter'),
-    ('202150', '2022', '1/8/2022', 'Jan', 'Winter'),
-    ('202151', '2022', '1/15/2022', 'Jan', 'Winter'),
-    ('202152', '2022', '1/22/2022', 'Jan', 'Winter');
+    ('202149', '2021', '1/1/2022', 'Jan', 'Winter'),
+    ('202150', '2021', '1/8/2022', 'Jan', 'Winter'),
+    ('202151', '2021', '1/15/2022', 'Jan', 'Winter'),
+    ('202152', '2021', '1/22/2022', 'Jan', 'Winter');
 
 INSERT INTO Historical
     (WMWeek, ItemID, UnitCost, StoreCount, POSQuantity)
