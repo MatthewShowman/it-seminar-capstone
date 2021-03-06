@@ -21,14 +21,15 @@ VALUES
     ('Cleaner Specialty Liquid 21oz', '737915', 21, 'Liquid', 'Cleaner', 1);
 
 INSERT INTO SalesProfile
-    (ProfileName, UnitCost, LeadTime, isDefaultProfile, ItemID, BrandID, ClientID, IsGeneral)
+    (ProfileName, Multiplier, UnitCost, LeadTime, isDefaultProfile, ItemID, BrandID, ClientID, IsGeneral)
 VALUES
-    ('Cleaner Foaming Spray 13oz', 3.13, 7, 1, 1, 1, 1, 0),
-('Cleaner Liquid 14oz', 3.87, 7, 1, 2, 1, 1, 0),
-('Cleaner Liquid 64oz', 16.51, 7, 1, 3, 1, 1, 0),
-('Cleaner Specialty Canister 9oz', 6.53, 10, 1, 4, 1, 1, 0),
-('Cleaner Specialty Foaming Spray', 4.02, 10, 1, 5, 1, 1, 0),
-('Cleaner Specialty Liquid 21oz', 6.07, 5, 1, 6, 1, 1, 0);
+    ('Cleaner Foaming Spray 13oz', 1, 3.13, 7, 1, 1, 1, 1, 0),
+    ('Cleaner Liquid 14oz', 1, 3.87, 7, 1, 2, 1, 1, 0),
+    ('Cleaner Liquid 64oz', 1, 16.51, 7, 1, 3, 1, 1, 0),
+    ('Cleaner Specialty Canister 9oz', 1, 6.53, 10, 1, 4, 1, 1, 0),
+    ('Cleaner Specialty Foaming Spray', 1, 4.02, 10, 1, 5, 1, 1, 0),
+    ('Cleaner Specialty Liquid 21oz', 1, 6.07, 5, 1, 6, 1, 1, 0),
+    ('Add 10%', 1.1, NULL, NULL, 0, NULL, NULL, NULL, 1);
 
 INSERT INTO WM_Date
     (WMWeek, WMYear, WeekStart, Month, Season)

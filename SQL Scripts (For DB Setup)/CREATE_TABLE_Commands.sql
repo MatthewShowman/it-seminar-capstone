@@ -37,9 +37,9 @@ CREATE TABLE SalesProfile
 (
     ProfileID INT IDENTITY PRIMARY KEY,
     ProfileName NVARCHAR(75) NOT NULL,
-    UnitCost DECIMAL(10,2) NOT NULL,
+    UnitCost DECIMAL(10,2),
     Multiplier DECIMAL(5,2) NOT NULL DEFAULT 1,
-    LeadTime INT NOT NULL,
+    LeadTime INT,
     isDefaultProfile BIT NOT NULL,
     ItemID INT FOREIGN KEY REFERENCES Item(ItemID) DEFAULT NULL, 
     BrandID INT FOREIGN KEY REFERENCES Brand(BrandID) DEFAULT NULL, -- We aren't going to use this level, but it's available.
