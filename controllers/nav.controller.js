@@ -5,7 +5,7 @@ const config = require('../mssql.utils');
 async function getClientList(){
     try {
         let pool = await sql.connect(config);
-        let items = await pool.request().query('SELECT ClientID, ClientName FROM Client ORDER BY ClientName')
+        let items = await pool.request().query('SELECT * FROM Client ORDER BY ClientName')
         return items.recordsets;
     }
     catch (error) {
@@ -19,7 +19,7 @@ async function getBrandList(ClientID){
         let pool = await sql.connect(config);
         let items = await pool.request()
             .input('IdParam', sql.Int, ClientID)
-            .query('SELECT BrandID, Brand FROM Brand WHERE ClientID = @IDParam ORDER BY Brand')
+            .query('SELECT * WHERE ClientID = @IDParam ORDER BY Brand')
         return items.recordsets;
     }
     catch (error) {
@@ -28,12 +28,12 @@ async function getBrandList(ClientID){
 }
 
 
-async function getProductList(BrandID){
+async function getProductList(ClientID){
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
-            .input('IdParam', sql.Int, BrandID)
-            .query('SELECT ItemID, Alias, SizeOZ, Sku FROM Item WHERE BrandID = @IdParam ORDER BY Alias');
+            .input('IdParam', sql.Int, ClientID)
+            .query('SELECT * FROM Item WHERE ClientID = @IdParam ORDER BY Alias');
         return item.recordsets;
     }
     catch (error) {
