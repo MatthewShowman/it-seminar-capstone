@@ -36,15 +36,15 @@ CREATE TABLE WM_Date
 CREATE TABLE SalesProfile
 (
     ProfileID INT IDENTITY PRIMARY KEY,
-    ProfileName NVARCHAR(25) NOT NULL,
+    ProfileName NVARCHAR(75) NOT NULL,
     UnitCost DECIMAL(10,2) NOT NULL,
     Multiplier DECIMAL(5,2) NOT NULL DEFAULT 1,
     LeadTime INT NOT NULL,
-    isDefaultProfile BINARY NOT NULL,
-    ItemID INT FOREIGN KEY REFERENCES ItemID(ItemID) DEFAULT NULL, 
+    isDefaultProfile BIT NOT NULL,
+    ItemID INT FOREIGN KEY REFERENCES Item(ItemID) DEFAULT NULL, 
     BrandID INT FOREIGN KEY REFERENCES Brand(BrandID) DEFAULT NULL, -- We aren't going to use this level, but it's available.
     ClientID INT FOREIGN KEY REFERENCES Client(ClientID) DEFAULT NULL, -- We aren't going to use this level, but it's available.
-    IsGeneral BINARY NOT NULL -- For use on a general profile, e.g. "Add 10%".
+    IsGeneral BIT NOT NULL -- For use on a general profile, e.g. "Add 10%".
     
     -- Ideally we should add constraint that does not allow "IsGeneral" to be true unless the ItemID, BrandID, and ClientID are NULL.
     -- What else needed to be put in these profiles?
