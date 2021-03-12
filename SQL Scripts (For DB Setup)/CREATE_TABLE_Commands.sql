@@ -1,54 +1,96 @@
 CREATE TABLE Client
 (
     ClientID INT IDENTITY PRIMARY KEY,
-    ClientName NVARCHAR(255) NOT NULL,
-    HGAM NVARCHAR(255) NOT NULL, -- I moved this line because HG said they focus on the client level
-    Contact NVARCHAR(255) NOT NULL -- I moved this line because HG said they focus on the client level
+    ClientName VARCHAR(255) NOT NULL
+    --HGAM NVARCHAR(255) NOT NULL, -- I moved this line because HG said they focus on the client level
+    --Contact NVARCHAR(255) NOT NULL -- I moved this line because HG said they focus on the client level
 )
 
 CREATE TABLE Brand
 (
     BrandID INT IDENTITY PRIMARY KEY,
-    BrandName NVARCHAR (255) NOT NULL,
+    BrandName VARCHAR (100) NOT NULL,
     ClientID INT FOREIGN KEY REFERENCES Client(ClientID)
+)
+
+CREATE TABLE ProductCategory
+(
+    CatID INT IDENTITY PRIMARY KEY,
+    CatName VARCHAR (100) NOT NULL
+)
+
+CREATE TABLE ProductGroup
+(
+    GroupID INT IDENTITY PRIMARY KEY,
+    GroupName VARCHAR (100) NOT NULL
 )
 
 CREATE TABLE Item
 (
     ItemID INT IDENTITY PRIMARY KEY,
-    Alias NVARCHAR(255) NOT NULL,
-    Sku NVARCHAR(255) NOT NULL,
-    SizeOZ DECIMAL(10,2) NOT NULL, -- Does this makes sense? Other products will use different units.
-    ItemGroup NVARCHAR(255) NOT NULL,
-    Category NVARCHAR(255) NOT NULL,
-    BrandID INT FOREIGN KEY REFERENCES Brand(BrandID)
+    ItemName NVARCHAR(255) NOT NULL,
+    --Sku NVARCHAR(255) NOT NULL,
+    --SizeOZ DECIMAL(10,2) NOT NULL, -- Does this makes sense? Other products will use different units.
+    BrandID INT FOREIGN KEY REFERENCES Brand(BrandID),
+    CatID INT FOREIGN KEY REFERENCES ProductCategory(CatID),
+    GroupID INT FOREIGN KEY REFERENCES ProductCategory(CatID)
 )
 
-CREATE TABLE WM_Date
+CREATE TABLE WMWeek
 (
-    WMWeek CHAR(6) PRIMARY KEY,
-    WeekStart DATETIME NOT NULL,
-    WMYear CHAR(4) NOT NULL, -- This will need to be the identifier to get the 52-week year, so specify it's a WM year.
-    Month NVARCHAR(20) NOT NULL,
-    Season NVARCHAR(25) NOT NULL
+    WMWeekCode INT PRIMARY KEY,
+    WM_WeekNum INT NOT NULL,
+    WM_Year CHAR(4) NOT NULL,
+    WM_Month INT,
+    -- This COULD be derived from WM_WeekNum
+    CalStartDate DATETIME NOT NULL
+    --Season NVARCHAR(25) NOT NULL -- This can be derived from WM_Month
 )
 
-CREATE TABLE SalesProfile
+CREATE TABLE Historical
+(
+    HistoricalID INT IDENTITY PRIMARY KEY,
+    WMWeekCode INT FOREIGN KEY REFERENCES WMWeek(WMWeekCode) NOT NULL,
+    ItemID INT FOREIGN KEY REFERENCES Item(ItemID) NOT NULL,
+    ItemPrice DECIMAL(6,2) NOT NULL,
+    POS_Stores INT NOT NULL,
+    POS_Items INT NOT NULL
+)
+
+CREATE TABLE SeasonalProfile
 (
     ProfileID INT IDENTITY PRIMARY KEY,
-    ProfileName NVARCHAR(75) NOT NULL,
-    UnitCost DECIMAL(10,2),
-    Multiplier DECIMAL(5,2) NOT NULL DEFAULT 1,
-    LeadTime INT,
-    isDefaultProfile BIT NOT NULL,
-    ItemID INT FOREIGN KEY REFERENCES Item(ItemID) DEFAULT NULL, 
-    BrandID INT FOREIGN KEY REFERENCES Brand(BrandID) DEFAULT NULL, -- We aren't going to use this level, but it's available.
-    ClientID INT FOREIGN KEY REFERENCES Client(ClientID) DEFAULT NULL, -- We aren't going to use this level, but it's available.
-    IsGeneral BIT NOT NULL -- For use on a general profile, e.g. "Add 10%".
-    
+    ProfileName VARCHAR(100) NOT NULL,
+    ClientID INT REFERENCES Client(ClientID) NOT NULL,
+    WeekNum INT NOT NULL,
+    SeasonFactor DECIMAL(3,1) NOT NULL
+)
+
+CREATE TABLE Forecast
+(
+    ForecastID INT IDENTITY PRIMARY KEY,
+    ItemID INT FOREIGN KEY REFERENCES Item(ItemID) DEFAULT NULL,
+    WMWeekCode INT FOREIGN KEY REFERENCES WMWeek(WMWeekCode) NOT NULL,
+    Velocity DECIMAL(3,1) NOT NULL,
+    ProfileID INT REFERENCES SeasonalProfile(ProfileID),
+    ForecastPrice DECIMAL(15,2),
+    ItemAdjust INT NOT NULL DEFAULT 0,
+    FactorAdjust DECIMAL(3,1) NOT NULL DEFAULT 0
+
+
+    --LeadTime INT,
+    --isDefaultProfile BIT NOT NULL,
+
+    --BrandID INT FOREIGN KEY REFERENCES Brand(BrandID) DEFAULT NULL,
+    -- We aren't going to use this level, but it's available.
+    --ClientID INT FOREIGN KEY REFERENCES Client(ClientID) DEFAULT NULL,
+    -- We aren't going to use this level, but it's available.
+    --IsGeneral BIT NOT NULL
+    -- For use on a general profile, e.g. "Add 10%".
+
     -- Ideally we should add constraint that does not allow "IsGeneral" to be true unless the ItemID, BrandID, and ClientID are NULL.
     -- What else needed to be put in these profiles?
-)
+);
 
 
 -- I assume we don't need the table below if we don't focus on persistence.
@@ -62,13 +104,4 @@ CREATE TABLE Use_Profile (
 )
 */
 
-CREATE TABLE Historical
-    (
-    WMWeek CHAR(6) FOREIGN KEY REFERENCES WM_Date(WMWeek),
-    ItemID INT FOREIGN KEY REFERENCES Item(ItemID),
-    UnitCost DECIMAL(10,2) NOT NULL,
-    StoreCount INT NOT NULL,
-    POSQuantity INT NOT NULL,
-    PRIMARY KEY (WMWeek, ItemID)
-    );
 
