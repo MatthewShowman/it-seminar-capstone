@@ -1,7 +1,7 @@
 CREATE TABLE Client
 (
     ClientID INT IDENTITY PRIMARY KEY,
-    ClientName VARCHAR(255) NOT NULL
+    ClientName VARCHAR(100) NOT NULL
     --HGAM NVARCHAR(255) NOT NULL, -- I moved this line because HG said they focus on the client level
     --Contact NVARCHAR(255) NOT NULL -- I moved this line because HG said they focus on the client level
 )
@@ -28,12 +28,12 @@ CREATE TABLE ProductGroup
 CREATE TABLE Item
 (
     ItemID INT IDENTITY PRIMARY KEY,
-    ItemName NVARCHAR(255) NOT NULL,
+    ItemName NVARCHAR(100) NOT NULL,
     --Sku NVARCHAR(255) NOT NULL,
     --SizeOZ DECIMAL(10,2) NOT NULL, -- Does this makes sense? Other products will use different units.
     BrandID INT FOREIGN KEY REFERENCES Brand(BrandID),
     CatID INT FOREIGN KEY REFERENCES ProductCategory(CatID),
-    GroupID INT FOREIGN KEY REFERENCES ProductCategory(CatID)
+    GroupID INT FOREIGN KEY REFERENCES ProductGroup(GroupID)
 )
 
 CREATE TABLE WMWeek
