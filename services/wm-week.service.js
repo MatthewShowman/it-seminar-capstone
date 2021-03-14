@@ -37,6 +37,14 @@ function createNextWeek(oldWeek) {
     return nextWeek;
 }
 
+function transitionToNextWeek(WMWeekCode) {
+    let weekPart = WMWeekCode.toString().slice(4,6);
+    if (weekPart == '52') {
+        return WMWeekCode + 49;
+    } else {
+        return WMWeekCode +1;
+    }
+}
 
 
 // Backend Services
@@ -47,6 +55,18 @@ async function getFutureWMWeeksCount(){
         let item = await pool.request()
             .query('SELECT COUNT(*) AS NumberOfWeeks FROM WMWeek WHERE CalStartDate >= DATEADD(week, -1, GETDATE())');
         return item.recordsets[0][0].NumberOfWeeks;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+async function getCurrentWeek() {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .query('SELECT TOP 1 * FROM WMWeek WHERE CalStartDate >= DATEADD(week, -1, GETDATE())');
+        return item.recordsets[0][0];
     }
     catch (error) {
         console.log(error);
@@ -104,10 +124,12 @@ async function buildNeededWeeks(numberOfWeeks){
         nextWeek.CalStartDate = await updateCalStartDate();
         await addWeek(nextWeek);
     }
-
 }
 
 module.exports = {
     getFutureWMWeeksCount : getFutureWMWeeksCount,
+    getCurrentWeek : getCurrentWeek,
+    transitionToNextWeek : transitionToNextWeek,
+    createNextWeek : createNextWeek,
     buildNeededWeeks : buildNeededWeeks
 }

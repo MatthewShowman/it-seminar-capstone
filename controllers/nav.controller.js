@@ -1,5 +1,7 @@
 const sql = require('mssql');
 const config = require('../mssql.utils');
+const WMWeekServices = require('../services/wm-week.service');
+const ForecastServices = require('../services/forecast.service');
 
 
 async function getClientList(){

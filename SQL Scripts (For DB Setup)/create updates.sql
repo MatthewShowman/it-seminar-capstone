@@ -87,7 +87,7 @@ CREATE TABLE Forecast
     ForecastPrice DECIMAL(15,2) DEFAULT 1.00,
     ForecastStores INT DEFAULT 0,
     ItemAdjust INT NOT NULL DEFAULT 0,
-    FactorAdjust DECIMAL(3,1) NOT NULL DEFAULT 0
+    FactorAdjust DECIMAL(3,1) NOT NULL DEFAULT 1
 
 
     --LeadTime INT,

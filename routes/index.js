@@ -4,8 +4,9 @@ const forecastController = require('../controllers/forecast.controller');
 const updateController = require('../controllers/update.controller');
 
 const services = require('../services');
-const WMWeeksServices = require('../services/wm-week.service');
+const WMWeekServices = require('../services/wm-week.service');
 const ProfileServices = require('../services/profile.service');
+const ForecastServices = require('../services/forecast.service');
 
 // Navigation Routes
 
@@ -26,25 +27,25 @@ router.route('/brands/:id').get((req, res) => {
 })
 
 // Route to READ all products from one brand for one client
-router.route('/products').get((req, res) => {
-    navController.getProductList(req.query.id).then(result => {
+router.route('/products/:id').get((req, res) => {
+    navController.getProductList(req.params.id).then(result => {
         console.log(result[0]);
         res.json(result[0]);
     })
 })
 
+
+// Forecast Data Route
+router.route('/product/forecast/:id').get((req, res) => {
+    forecastController.getItemForecast(req.params.id).then(result => {
+        console.log(result[0]);
+        res.json(result[0]);
+    })
+})
 
 // Historical Data Route
 router.route('/product-data/:id').get((req, res) => {
     forecastController.getHistoricalData(req.params.id).then(result => {
-        console.log(result[0]);
-        res.json(result[0]);
-    })
-})
-
-// Forecast Data Route
-router.route('/forecast/:id').get((req, res) => {
-    forecastController.getItemForecast(req.params.id).then(result => {
         console.log(result[0]);
         res.json(result[0]);
     })
@@ -101,14 +102,14 @@ router.route('/test/getFutureWMWeeksCount').get((req, res) => {
 })
 
 router.route('/test/getLastFutureWeek').get((req, res) => {
-    WMWeeksServices.getLastFutureWeek().then(result => {
+    WMWeekServices.getLastFutureWeek().then(result => {
         console.log(result);
         res.json(result);
     })
 })
 
 router.route('/test/buildNeededWeeks').get((req, res) => {
-    WMWeeksServices.buildNeededWeeks(numberOfWeeks).then(result => {
+    WMWeekServices.buildNeededWeeks(numberOfWeeks).then(result => {
         console.log(result);
         res.json(result);
     })
@@ -128,5 +129,19 @@ router.route('/test/getProfile').get((req, res) => {
     })
 })
 
+router.route('/test/getVelocity').get((req, res) => {
+    ForecastServices.getVelocity(req.query.id, req.query.year).then(result => {
+        console.log(result);
+        res.json(result);
+    })
+})
+
+router.route('/test/buildNewForecast').post((req, res) => {;
+    newForecastParams = {...req.body};
+    ForecastServices.buildNewForecast(newForecastParams).then(result => {
+         console.log(result);
+         res.status(201).json(result);
+     })
+ })
 
 module.exports = router;
