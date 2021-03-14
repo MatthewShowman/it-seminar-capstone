@@ -4,7 +4,7 @@ const ProfileServices = require('../services/profile.service');
 const WMWeekServices = require('../services/wm-week.service');
 
 // Helper functions
- function baseForecastBuilder(itemID, week, velocity, price, stores) {
+ function baseForecastBuilder(itemID, week, velocity, price, stores, leadTime) {
     let newBaseForecast = {
         "ItemID" : itemID,
         "WMWeekCode" : week,
@@ -23,6 +23,8 @@ const WMWeekServices = require('../services/wm-week.service');
         newBaseForecast.ForecastStores = 0;
     }
 
+    if (leadTime >= 0) {newBaseForecast.LeadTime = leadTime}
+
     return newBaseForecast;
  }
 
@@ -33,7 +35,7 @@ async function getUpcomingForecastCount(itemID){
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, itemID)
-            .query('SELECT COUNT(*) AS NumberOfForecasts FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE ItemID = @IdParam AND w.CalStartDate >= DATEADD(week, -3, GETDATE())');
+            .query('SELECT COUNT(*) AS NumberOfForecasts FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE ItemID = @IdParam AND w.CalStartDate >= DATEADD(week, -1, GETDATE());');
         return item.recordsets[0][0].NumberOfForecasts;
     }
     catch (error) {
@@ -84,6 +86,19 @@ async function getVelocity(itemID, year) {
     }
 }
 
+async function getLastForecast(itemID) {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('IdParam', sql.Int, itemID)
+            .query('SELECT TOP 1 * FROM Forecast WHERE ItemID = @IdParam ORDER BY WMWeekCode DESC;');
+        return item.recordsets[0][0].TotalForecasts;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 async function addForecastRecord(newForecastRecord) {
     try {
         let pool = await sql.connect(config);
@@ -91,53 +106,44 @@ async function addForecastRecord(newForecastRecord) {
             .input('ItemID', sql.Int, newForecastRecord.ItemID)
             .input('WMWeekCode', sql.Int, newForecastRecord.WMWeekCode)
             .input('Velocity', sql.Decimal(3,1), newForecastRecord.Velocity)
-            .input('ProfileID', sql.Int, newForecastRecord.ProfileID)
             .input('ForecastPrice', sql.Decimal(15,2), newForecastRecord.ForecastPrice)
             .input('ForecastStores', sql.Int, newForecastRecord.ForecastStores)
-            .query('INSERT INTO Forecast (ItemID, WMWeekCode, Velocity, ProfileID, ForecastPrice, ForecastStores) VALUES (@ItemID, @WMWeekCode, @Velocity, @ProfileID, @ForecastPrice, @ForecastStores)');
+            .input('LeadTime', sql.Int, newForecastRecord.LeadTime)
+            .query('INSERT INTO Forecast (ItemID, WMWeekCode, Velocity, ForecastPrice, ForecastStores, LeadTime) VALUES (@ItemID, @WMWeekCode, @Velocity, @ForecastPrice, @ForecastStores, @LeadTime)');
     }
     catch (error) {
         console.log(error);
     }
 }
 
-async function updateForecast(itemID) {
-    
-    newForecast = {};
+async function addToForecast(itemID,numberOfForecastWeeks) {
+    let forecastsToBuild = 52 - numberOfForecastWeeks;
+    let lastAvailableForcast = await getLastForecast(itemID);
 
-    if (currentNumForecasts == 0) {
-        let totalHistoricalForecasts = await getTotalForecastCount(itemID);
-        if (totalHistoricalForecasts = 0) {
-            newForecast.ItemID = itemID;
-            newForecast.Velocity = 1.0;
-            newForecast.ProfileID = NULL;
-            newForecast.ForecastPrice = 1.00;
-            newForecast.Forestores = 0;
-            newForecast.ItemAdjust = 0
-
-        }
-    } else {
-
+    currentWMWeekCode = lastAvailableForcast.WMWeekCode;
+    for (i = 0; i < forecastsToBuild; i++) {
+        let newForecastRecord = lastAvailableForcast;
+        currentWMWeekCode = WMWeekServices.transitionToNextWeek(currentWMWeekCode);
+        newForecastRecord.WMWeekCode = currentWMWeekCode;
+        await addForecastRecord(newForecastRecord);
     }
-    
-    
-    //let velocityYear = new Date().getFullYear() - 1;
 }
 
 async function buildNewForecast(forecastParams) {
     let itemID = forecastParams.ItemID
-    let defaultProfile = await ProfileServices.getFullProfile(0);
     let currentWMWeek = await WMWeekServices.getCurrentWeek();
     let itemVelocity = await getVelocity(itemID, forecastParams.targetYear);
     let initialPrice = forecastParams.price;
     let initialStores = forecastParams.stores;
+    let leadTime = forecastParams.leadTime;
 
-    let newBaseForecast = baseForecastBuilder(itemID, currentWMWeek.WMWeekCode, itemVelocity, initialPrice, initialStores);
+    let newBaseForecast = baseForecastBuilder(itemID, currentWMWeek.WMWeekCode, itemVelocity, initialPrice, initialStores, leadTime);
 
+    currentWMWeekCode = currentWMWeek.WMWeekCode;
     for (i = 0; i < 52; i++) {
         let newForecastRecord = newBaseForecast;
-        newForecastRecord.WMWeekCode = WMWeekServices.transitionToNextWeek(currentWMWeek.WMWeekCode);
-        newForecastRecord.ProfileID = defaultProfile[i].ProfileID;
+        currentWMWeekCode = WMWeekServices.transitionToNextWeek(currentWMWeekCode);
+        newForecastRecord.WMWeekCode = currentWMWeekCode;
         await addForecastRecord(newForecastRecord);
     }
 }
@@ -146,6 +152,6 @@ module.exports = {
     getUpcomingForecastCount : getUpcomingForecastCount,
     getVelocity : getVelocity,
     addForecastRecord : addForecastRecord,
-    updateForecast : updateForecast,
+    addToForecast : addToForecast,
     buildNewForecast : buildNewForecast
 }
