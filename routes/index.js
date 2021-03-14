@@ -13,15 +13,13 @@ const ForecastServices = require('../services/forecast.service');
 // Route to READ all clients
 router.route('/clients').get((req, res) => {
     navController.getClientList().then(result => {
-        console.log(result[0]);
         res.json(result[0]);
     })
 })
 
 // Route to READ all brands for one client
-router.route('/brands/:id').get((req, res) => {
+router.route('/clients/:id').get((req, res) => {
     navController.getBrandList(req.params.id).then(result => {
-        console.log(result[0]);
         res.json(result[0]);
     })
 })
@@ -143,5 +141,12 @@ router.route('/test/buildNewForecast').post((req, res) => {;
          res.status(201).json(result);
      })
  })
+
+ router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {;
+    ForecastServices.getUpcomingForecastCount(req.params.id).then(result => {
+        console.log(result);
+        res.json(result);
+    })
+})
 
 module.exports = router;
