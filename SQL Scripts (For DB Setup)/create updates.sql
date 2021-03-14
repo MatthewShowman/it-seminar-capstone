@@ -1,3 +1,13 @@
+--DROP TABLE Forecast;
+--DROP TABLE SeasonalProfile;
+--DROP TABLE Historical;
+--DROP TABLE WMWeek;
+--DROP TABLE Item;
+--DROP TABLE ProductGroup;
+--DROP TABLE ProductCategory;
+--DROP TABLE Brand;
+--DROP TABLE Client;
+
 CREATE TABLE Client
 (
     ClientID INT IDENTITY PRIMARY KEY,
@@ -32,7 +42,6 @@ CREATE TABLE Item
     --Sku NVARCHAR(255) NOT NULL,
     --SizeOZ DECIMAL(10,2) NOT NULL, -- Does this makes sense? Other products will use different units.
     BrandID INT FOREIGN KEY REFERENCES Brand(BrandID),
-    ClientID INT FOREIGN KEY REFERENCES Client(ClientID),
     CatID INT FOREIGN KEY REFERENCES ProductCategory(CatID),
     GroupID INT FOREIGN KEY REFERENCES ProductGroup(GroupID)
 )
@@ -62,6 +71,7 @@ CREATE TABLE SeasonalProfile
 (
     ProfileID INT IDENTITY PRIMARY KEY,
     ProfileName VARCHAR(100) NOT NULL,
+    GroupingDigit INT NOT NULL,
     ClientID INT REFERENCES Client(ClientID) NOT NULL,
     WeekNum INT NOT NULL,
     SeasonFactor DECIMAL(3,1) NOT NULL
@@ -74,8 +84,8 @@ CREATE TABLE Forecast
     WMWeekCode INT FOREIGN KEY REFERENCES WMWeek(WMWeekCode) NOT NULL,
     Velocity DECIMAL(3,1) NOT NULL,
     ProfileID INT REFERENCES SeasonalProfile(ProfileID),
-    ForecastPrice DECIMAL(15,2),
-    ForecastStores INT,
+    ForecastPrice DECIMAL(15,2) DEFAULT 1.00,
+    ForecastStores INT DEFAULT 0,
     ItemAdjust INT NOT NULL DEFAULT 0,
     FactorAdjust DECIMAL(3,1) NOT NULL DEFAULT 0
 

@@ -33,7 +33,7 @@ async function getProductList(ClientID){
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, ClientID)
-            .query('SELECT * FROM Item WHERE ClientID = @IdParam ORDER BY Alias');
+            .query('SELECT i.ItemID, i.ItemName, i.BrandID, b.BrandName, i.ClientID, c.ClientName, i.CatID, pc.CatName, i.GroupID, pg.GroupName FROM Item i JOIN Brand b ON i.BrandID = b.BrandID JOIN Client c ON i.ClientID = c.ClientID JOIN ProductCategory pc ON i.CatID = pc.CatID JOIN ProductGroup pg ON i.GroupID = pg.GroupID WHERE i.ClientID = @IdParam');
         return item.recordsets;
     }
     catch (error) {
