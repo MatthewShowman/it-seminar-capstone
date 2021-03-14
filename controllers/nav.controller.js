@@ -4,6 +4,7 @@ const WMWeekServices = require('../services/wm-week.service');
 const ForecastServices = require('../services/forecast.service');
 
 
+// GET all the clients from the client table
 async function getClientList(){
     try {
         let pool = await sql.connect(config);
@@ -15,13 +16,13 @@ async function getClientList(){
     }
 }
 
-
+// GET all the brands belonging to one client
 async function getBrandList(ClientID){
     try {
         let pool = await sql.connect(config);
         let items = await pool.request()
             .input('IdParam', sql.Int, ClientID)
-            .query('SELECT * WHERE ClientID = @IDParam ORDER BY Brand')
+            .query('SELECT * FROM Brand WHERE ClientID = @IdParam ORDER BY BrandName')
         return items.recordsets;
     }
     catch (error) {
@@ -29,13 +30,13 @@ async function getBrandList(ClientID){
     }
 }
 
-
+// GET all of the products belonging to one client
 async function getProductList(ClientID){
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, ClientID)
-            .query('SELECT i.ItemID, i.ItemName, i.BrandID, b.BrandName, i.ClientID, c.ClientName, i.CatID, pc.CatName, i.GroupID, pg.GroupName FROM Item i JOIN Brand b ON i.BrandID = b.BrandID JOIN Client c ON i.ClientID = c.ClientID JOIN ProductCategory pc ON i.CatID = pc.CatID JOIN ProductGroup pg ON i.GroupID = pg.GroupID WHERE i.ClientID = @IdParam');
+            .query('SELECT i.ItemID, i.ItemName, i.BrandID, b.BrandName, i.ClientID, c.ClientName, i.CatID, pc.CatName, i.GroupID, pg.GroupName, i.CurrentProfile, p.ProfileName FROM Item i JOIN Brand b ON i.BrandID = b.BrandID JOIN Client c ON i.ClientID = c.ClientID JOIN ProductCategory pc ON i.CatID = pc.CatID JOIN ProductGroup pg ON i.GroupID = pg.GroupID JOIN SeasonalProfile p ON i.CurrentProfile = p.ProfileID WHERE i.ClientID = @IdParam');
         return item.recordsets;
     }
     catch (error) {

@@ -3,34 +3,34 @@ const config = require('../mssql.utils');
 const WMWeekServices = require('../services/wm-week.service');
 const ForecastServices = require('../services/forecast.service');
 
-async function getItemForecast(ItemID){
+async function getItemForecast(itemID){
     // Check that the number of future weeks is 52.
     // if the number is less than 52 --> create the needed future weeks
         // check how many weeks are needed.
         // create a loop to produce that many weeks
         // build each week
         // submit each week to the DB via SQL
+    let numberOfCalWeeks = await WMWeekServices.getFutureWMWeeksCount();
+    if (numberOfCalWeeks < 52) {
+        await WMWeekServices.buildNeededWeeks(numberOfCalWeeks);
+    }
     // if the number IS 52, check to that the item forecast has 52 weeks
         // if the item forecast has less than 52 weeks --> create the needed weeks
             // check how many weeks are needed.
             // create a loop to produce that many weeks
             // build each week
             // submit each week to the DB via SQL
-        // if the number IS 52 --> return the forecast.
-    let numberOfCalWeeks = await WMWeekServices.getFutureWMWeeksCount();
-    if (numberOfCalWeeks < 52) {
-        await WMWeekServices.buildNeededWeeks(numberOfCalWeeks);
-    }
-    
+  
     let numberOfForecastWeeks = await ForecastServices.getUpcomingForecastCount(ItemID)
-    if (numberOfForecastWeeks < 53) {
-        await ForecastServices.updateForecast(ItemID,numberOfForecastWeeks);
+    if (numberOfForecastWeeks < 52) {
+        await ForecastServices.addToForecast(itemID,numberOfForecastWeeks);
     }
 
+    // if the number of future WMWeek = 52 AND Forcast weeks = 52 --> return the forecast. 
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
-            .input('IdParam', sql.Int, ItemID)
+            .input('IdParam', sql.Int, itemID)
             .query('SELECT * FROM WMWeek WHERE CalStartDate >= GETDATE() - 1');
             //.query('SELECT * FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE f.ItemID = @IdParam AND w.CalStartDate >= G');
         return item.recordsets;
