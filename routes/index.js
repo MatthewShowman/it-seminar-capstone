@@ -106,6 +106,13 @@ router.route('/test/getLastFutureWeek').get((req, res) => {
     })
 })
 
+router.route('/test/getLastForecast').get((req, res) => {
+    ForecastServices.getLastForecast(req.query.itemID).then(result => {
+        console.log(result);
+        res.json(result);
+    })
+})
+
 router.route('/test/buildNeededWeeks').get((req, res) => {
     WMWeekServices.buildNeededWeeks(numberOfWeeks).then(result => {
         console.log(result);
