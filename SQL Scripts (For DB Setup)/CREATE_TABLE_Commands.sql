@@ -38,7 +38,8 @@ CREATE TABLE Item
     ClientID INT FOREIGN KEY REFERENCES Client(ClientID),
     CatID INT FOREIGN KEY REFERENCES ProductCategory(CatID),
     GroupID INT FOREIGN KEY REFERENCES ProductGroup(GroupID),
-    CurrentProfile INT FOREIGN KEY REFERENCES SeasonalProfile(ProfileID)
+    CurrentProfile INT FOREIGN KEY REFERENCES SeasonalProfile(ProfileID),
+    IsCurrentProd CHAR(1) NOT NULL DEFAULT 'Y'
 )
 
 CREATE TABLE WMWeek
