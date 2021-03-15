@@ -130,6 +130,7 @@ async function buildNeededWeeks(numberOfWeeks){
 module.exports = {
     getFutureWMWeeksCount : getFutureWMWeeksCount,
     getCurrentWeek : getCurrentWeek,
+    getLastFutureWeek : getLastFutureWeek,
     transitionToNextWeek : transitionToNextWeek,
     createNextWeek : createNextWeek,
     buildNeededWeeks : buildNeededWeeks
