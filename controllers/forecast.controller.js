@@ -21,13 +21,16 @@ async function getItemForecast(itemID){
             // build each week
             // submit each week to the DB via SQL
   
-    let numberOfForecastWeeks = await ForecastServices.getUpcomingForecastCount(ItemID)
+    let numberOfForecastWeeks = await ForecastServices.getUpcomingForecastCount(itemID);
     if (numberOfForecastWeeks < 52) {
-        await ForecastServices.addToForecast(itemID,numberOfForecastWeeks);
+        await ForecastServices.addToForecast(itemID);
     }
 
-    // if the number of future WMWeek = 52 AND Forcast weeks = 52 --> return the forecast. 
-    try {
+    // if the number of future WMWeek = 52 AND Forecast weeks = 52 --> return the forecast. 
+    let itemForecast = await ForecastServices.getItemForecast(itemID);
+    return itemForecast;
+    
+/*     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, itemID)
@@ -37,7 +40,7 @@ async function getItemForecast(itemID){
     }
     catch (error) {
         console.log(error);
-    }
+    } */
 }
 
 async function getHistoricalData(ItemID){
