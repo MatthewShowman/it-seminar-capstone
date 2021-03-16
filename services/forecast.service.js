@@ -2,6 +2,7 @@ const sql = require('mssql');
 const config = require('../mssql.utils');
 const ProfileServices = require('../services/profile.service');
 const WMWeekServices = require('../services/wm-week.service');
+const HistoricalServices = require('../services/historical.service');
 
 // Helper functions
  function baseForecastBuilder(itemID, week, velocity, price, stores, leadTime) {
@@ -27,6 +28,8 @@ const WMWeekServices = require('../services/wm-week.service');
 
     return newBaseForecast;
  }
+
+
 
 // Backend Services
 
@@ -56,36 +59,6 @@ async function getTotalForecastCount(itemID){
     }
 }
 
-async function getVelocity(itemID, year) {
-    let targetYear = year;
-    if (targetYear == '') {
-        let newTargetYear = await WMWeekServices.getCurrentWeek();
-        if (newTargetYear.WM_Year == '2021') {
-            targetYear = '2019';
-        } else {
-            let calculatedYear = Number(newTargetYear) - 1;
-            targetYear = calculatedYear.toString();
-        }
-    }
-
-    try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, itemID)
-            .input('WM_Year', sql.Char, targetYear)
-            .query('SELECT CAST ( ROUND(SUM(h.POS_Items * 1.0) / SUM(h.POS_Stores),1) AS DECIMAL(3,1)) AS Velocity FROM Item i JOIN Historical h ON i.ItemID = h.ItemID JOIN WMWeek w ON h.WMWeekCode = w.WMWeekCode WHERE i.ItemID = @IdParam AND w.WM_Year = @WM_Year;');
-        let itemVelocity = item.recordsets[0][0].Velocity;
-        if (itemVelocity == null) {
-            return 1.0;
-        } else {
-            return itemVelocity;
-        }
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
 async function getLastForecast(itemID) {
     try {
         let pool = await sql.connect(config);
@@ -97,6 +70,15 @@ async function getLastForecast(itemID) {
     catch (error) {
         console.log(error);
     }
+}
+
+
+async function createForecastFromHistorical(itemID) {
+    let lastHistoricalRecord = await HistoricalServices.getLastItemHistory(itemID);
+    let itemVelocity = await HistoricalServices.getVelocity(itemID,'');
+    let currentWMWeek = await WMWeekServices.getCurrentWeek();
+    let proxyForecast = baseForecastBuilder(itemID, currentWMWeek.WMWeekCode, itemVelocity, lastHistoricalRecord.ItemPrice, lastHistoricalRecord.POS_Stores, );
+    return proxyForecast;
 }
 
 async function addForecastRecord(newForecastRecord) {
@@ -118,6 +100,11 @@ async function addForecastRecord(newForecastRecord) {
 
 async function addToForecast(itemID) {
     let lastAvailableForecast = await getLastForecast(itemID);
+
+    if (!lastAvailableForecast) {
+        lastAvailableForecast = await createForecastFromHistorical(itemID)
+    }
+
     let lastForecastWMWeekCode = lastAvailableForecast.WMWeekCode;
     
     let lastWMWeek = await WMWeekServices.getLastFutureWeek();
@@ -134,7 +121,7 @@ async function addToForecast(itemID) {
 async function buildNewForecast(forecastParams) {
     let itemID = forecastParams.ItemID
     let currentWMWeek = await WMWeekServices.getCurrentWeek();
-    let itemVelocity = await getVelocity(itemID, forecastParams.targetYear);
+    let itemVelocity = await HistoricalServices.getVelocity(itemID, forecastParams.targetYear);
     let initialPrice = forecastParams.price;
     let initialStores = forecastParams.stores;
     let leadTime = forecastParams.leadTime;
@@ -174,9 +161,9 @@ async function getItemForecast(itemID) {
 
 module.exports = {
     getUpcomingForecastCount : getUpcomingForecastCount,
-    getVelocity : getVelocity,
     addForecastRecord : addForecastRecord,
     addToForecast : addToForecast,
     buildNewForecast : buildNewForecast,
-    getItemForecast : getItemForecast
+    getItemForecast : getItemForecast,
+    createForecastFromHistorical : createForecastFromHistorical
 }
