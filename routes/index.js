@@ -7,6 +7,7 @@ const services = require('../services');
 const WMWeekServices = require('../services/wm-week.service');
 const ProfileServices = require('../services/profile.service');
 const ForecastServices = require('../services/forecast.service');
+const HistoricalServices = require('../services/historical.service');
 
 // Navigation Routes
 
@@ -135,7 +136,7 @@ router.route('/test/getProfile').get((req, res) => {
 })
 
 router.route('/test/getVelocity').get((req, res) => {
-    ForecastServices.getVelocity(req.query.id, req.query.year).then(result => {
+    HistoricalServices.getVelocity(req.query.id, req.query.year).then(result => {
         console.log(result);
         res.json(result);
     })
@@ -149,11 +150,19 @@ router.route('/test/buildNewForecast').post((req, res) => {;
      })
  })
 
- router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {;
+router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {;
     ForecastServices.getUpcomingForecastCount(req.params.id).then(result => {
         console.log(result);
         res.json(result);
     })
 })
+
+router.route('/test/createForecastFromHistorical').get((req, res) => {;
+    ForecastServices.createForecastFromHistorical(req.query.id).then(result => {
+        console.log(result);
+        res.json(result);
+    })
+})
+
 
 module.exports = router;
