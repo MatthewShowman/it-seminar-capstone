@@ -33,18 +33,6 @@ const HistoricalServices = require('../services/historical.service');
 
 // Backend Services
 
-async function getUpcomingForecastCount(itemID){
-    try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, itemID)
-            .query('SELECT COUNT(*) AS NumberOfForecasts FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE ItemID = @IdParam AND w.CalStartDate >= DATEADD(week, -1, GETDATE())');
-        return item.recordsets[0][0].NumberOfForecasts;
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
 
 async function getTotalForecastCount(itemID){
     try {
@@ -53,6 +41,19 @@ async function getTotalForecastCount(itemID){
             .input('IdParam', sql.Int, itemID)
             .query('SELECT COUNT(*) AS TotalForecasts FROM ForecastWHERE ItemID = @IdParam');
         return item.recordsets[0][0].TotalForecasts;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+async function getUpcomingForecastCount(itemID){
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('IdParam', sql.Int, itemID)
+            .query('SELECT COUNT(*) AS NumberOfForecasts FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE ItemID = @IdParam AND w.CalStartDate >= DATEADD(week, -1, GETDATE())');
+        return item.recordsets[0][0].NumberOfForecasts;
     }
     catch (error) {
         console.log(error);
@@ -71,7 +72,6 @@ async function getLastForecast(itemID) {
         console.log(error);
     }
 }
-
 
 async function createForecastFromHistorical(itemID) {
     let lastHistoricalRecord = await HistoricalServices.getLastItemHistory(itemID);
@@ -152,7 +152,7 @@ async function getItemForecast(itemID) {
                         'JOIN ProfileData p ON s.ProfileID = p.ProfileID ' +
                     'WHERE i.ItemID = @IdParam AND w.CalStartDate >= DATEADD(week, -1, GETDATE()) AND p.WeekNum = w.WM_WeekNum ' +
                     'ORDER BY WMWeekCode');
-        return item.recordsets;
+        return item.recordsets[0];
     }
     catch (error) {
         console.log(error);

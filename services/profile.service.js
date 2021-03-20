@@ -1,12 +1,12 @@
 const sql = require('mssql');
 const config = require('../mssql.utils');
 
-async function getFullProfile(groupingDigit) {
+async function getClientProfiles(clientID) {
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
-            .input('GroupingDigit', sql.Int, groupingDigit)
-            .query('SELECT * FROM SeasonalProfile WHERE GroupingDigit = @GroupingDigit ORDER BY WeekNum');
+            .input('IdParam', sql.Int, clientID)
+            .query('SELECT * FROM SeasonalProfile WHERE ClientID = @IdParam ORDER BY ProfileName');
         return item.recordsets[0];
     }
     catch (error) {
@@ -15,5 +15,5 @@ async function getFullProfile(groupingDigit) {
 }
 
 module.exports = {
-    getFullProfile : getFullProfile
+    getClientProfiles : getClientProfiles
 }

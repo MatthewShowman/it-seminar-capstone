@@ -3,6 +3,19 @@ const config = require('../mssql.utils');
 const WMWeekServices = require('../services/wm-week.service');
 
 
+async function getItemHistory(itemID) {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('IdParam', sql.Int, itemID)
+            .query('SELECT * FROM Historical WHERE ItemID = @IdParam ORDER BY WMWeekCode');
+        return item.recordsets[0];
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 async function getLastItemHistory(itemID) {
     try {
         let pool = await sql.connect(config);
@@ -47,6 +60,7 @@ async function getVelocity(itemID, year) {
 }
 
 module.exports = {
+    getItemHistory : getItemHistory,
     getLastItemHistory : getLastItemHistory,
     getVelocity : getVelocity
 }
