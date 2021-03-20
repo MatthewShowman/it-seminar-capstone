@@ -31,7 +31,6 @@ router.route('/clients/:id').get((req, res) => {
 // Returns an array [array of product objects, array of profiles]
 router.route('/products/:id').get((req, res) => {
     navController.getProductList(req.params.id).then(result => {
-        console.log(result);
         res.json(result);
     })
 })
@@ -41,7 +40,7 @@ router.route('/products/:id').get((req, res) => {
 
 // Route to READ one year of forecast data for one object
 // Returns an array of 52 weekly forecast objects
-router.route('/product/forecast/:id').get((req, res) => {
+router.route('/products/forecast/:id').get((req, res) => {
     forecastController.getItemForecast(req.params.id).then(result => {
         res.json(result);
     })
@@ -52,7 +51,7 @@ router.route('/product/forecast/:id').get((req, res) => {
 
 // Route to READ hostorical data for one item
 // Returns an array of all history objects for one item
-router.route('/historical-data/:id').get((req, res) => {
+router.route('/products/historical-data/:id').get((req, res) => {
     forecastController.getHistoricalData(req.params.id).then(result => {
         console.log(result);
         res.json(result);
@@ -63,29 +62,29 @@ router.route('/historical-data/:id').get((req, res) => {
 
 // Updating Ops
 router.route('/products/add').post((req, res) => {
-    newItem = {...req.body};
+    newItem = { ...req.body };
     updateController.addItem(newItem).then(result => {
-         console.log(result);
-         res.status(201).json(result);
-     })
- })
+        console.log(result);
+        res.status(201).json(result);
+    })
+})
 
 router.route('/update/add-week').post((req, res) => {
-    newWeek = {...req.body};
+    newWeek = { ...req.body };
     updateController.addWeek(newWeek).then(result => {
-         console.log(result);
-         res.status(201).json(result);
-     })
- })
+        console.log(result);
+        res.status(201).json(result);
+    })
+})
 
- router.route('/update/add-historical').post((req, res) => {
+router.route('/update/add-historical').post((req, res) => {
     console.log(req.body);
-    newRecord = {...req.body};
+    newRecord = { ...req.body };
     updateController.addHistorical(newRecord).then(result => {
-         console.log(result);
-         res.status(201).json(result);
-     })
- })
+        console.log(result);
+        res.status(201).json(result);
+    })
+})
 
 
 // TESTING ROUTES
@@ -153,22 +152,25 @@ router.route('/test/getVelocity').get((req, res) => {
     })
 })
 
-router.route('/test/buildNewForecast').post((req, res) => {;
-    newForecastParams = {...req.body};
+router.route('/test/buildNewForecast').post((req, res) => {
+    ;
+    newForecastParams = { ...req.body };
     ForecastServices.buildNewForecast(newForecastParams).then(result => {
-         console.log(result);
-         res.status(201).json(result);
-     })
- })
+        console.log(result);
+        res.status(201).json(result);
+    })
+})
 
-router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {;
+router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {
+    ;
     ForecastServices.getUpcomingForecastCount(req.params.id).then(result => {
         console.log(result);
         res.json(result);
     })
 })
 
-router.route('/test/createForecastFromHistorical').get((req, res) => {;
+router.route('/test/createForecastFromHistorical').get((req, res) => {
+    ;
     ForecastServices.createForecastFromHistorical(req.query.id).then(result => {
         console.log(result);
         res.json(result);
