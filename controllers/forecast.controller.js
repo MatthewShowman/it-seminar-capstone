@@ -30,34 +30,11 @@ async function getItemForecast(itemID){
     // if the number of future WMWeek = 52 AND Forecast weeks = 52 --> return the forecast. 
     let itemForecast = await ForecastServices.getItemForecast(itemID);
     return itemForecast;
-    
-/*     try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, itemID)
-            .query('SELECT * FROM WMWeek WHERE CalStartDate >= GETDATE() - 1');
-            //.query('SELECT * FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE f.ItemID = @IdParam AND w.CalStartDate >= G');
-        return item.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    } */
 }
 
 async function getHistoricalData(ItemID){
     let itemHistory = await HistoricalServices.getItemHistory(ItemID);
     return itemHistory;
-
-/*     try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, ItemID)
-            .query('SELECT * FROM Historical h JOIN WM_Date d ON h.WMWeek = d.WMWeek JOIN Item i ON h.itemID = i.itemID WHERE i.itemID = @IdParam AND (d.WMYear BETWEEN YEAR(GETDATE())-3 AND YEAR(GETDATE())-1) ORDER BY d.WMWeek');
-        return item.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    } */
  }
 
 async function getItemDefaultProfile(ItemID){
