@@ -12,46 +12,57 @@ const HistoricalServices = require('../services/historical.service');
 // Navigation Routes
 
 // Route to READ all clients
+// Returns a an array of all client objects
 router.route('/clients').get((req, res) => {
     navController.getClientList().then(result => {
-        res.json(result[0]);
+        res.json(result);
     })
 })
 
 // Route to READ all brands for one client
+// Returns an array of all brand objects for a given client.
 router.route('/clients/:id').get((req, res) => {
     navController.getBrandList(req.params.id).then(result => {
-        res.json(result[0]);
+        res.json(result);
     })
 })
 
 // Route to READ all products from one brand for one client
+// Returns an array [array of product objects, array of profiles]
 router.route('/products/:id').get((req, res) => {
     navController.getProductList(req.params.id).then(result => {
-        console.log(result[0]);
-        res.json(result[0]);
+        console.log(result);
+        res.json(result);
     })
 })
 
 
-// Forecast Data Route
+// Forecast Data Routes
+
+// Route to READ one year of forecast data for one object
+// Returns an array of 52 weekly forecast objects
 router.route('/product/forecast/:id').get((req, res) => {
     forecastController.getItemForecast(req.params.id).then(result => {
-        console.log(result[0]);
-        res.json(result[0]);
+        res.json(result);
     })
 })
+
 
 // Historical Data Route
-router.route('/product-data/:id').get((req, res) => {
+
+// Route to READ hostorical data for one item
+// Returns an array of all history objects for one item
+router.route('/historical-data/:id').get((req, res) => {
     forecastController.getHistoricalData(req.params.id).then(result => {
-        console.log(result[0]);
-        res.json(result[0]);
+        console.log(result);
+        res.json(result);
     })
 })
 
+
+
 // Updating Ops
-router.route('/update/add-item').post((req, res) => {
+router.route('/products/add').post((req, res) => {
     newItem = {...req.body};
     updateController.addItem(newItem).then(result => {
          console.log(result);
