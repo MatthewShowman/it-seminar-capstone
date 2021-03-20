@@ -2,6 +2,7 @@ const sql = require('mssql');
 const config = require('../mssql.utils');
 const WMWeekServices = require('../services/wm-week.service');
 const ForecastServices = require('../services/forecast.service');
+const HistoricalServices = require('../services/historical.service');
 
 async function getItemForecast(itemID){
     // Check that the number of future weeks is 52.
@@ -44,7 +45,10 @@ async function getItemForecast(itemID){
 }
 
 async function getHistoricalData(ItemID){
-    try {
+    let itemHistory = await HistoricalServices.getItemHistory(ItemID);
+    return itemHistory;
+
+/*     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, ItemID)
@@ -53,8 +57,8 @@ async function getHistoricalData(ItemID){
     }
     catch (error) {
         console.log(error);
-    }
-}
+    } */
+ }
 
 async function getItemDefaultProfile(ItemID){
     try {
