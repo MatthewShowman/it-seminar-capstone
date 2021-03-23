@@ -21,19 +21,19 @@ VALUES ('Spray'), ('Liquid'), ('Canister'),('Foam');
 
 -- Seasonal Profiles
 INSERT INTO SeasonalProfile (ProfileName, ClientID)
-VALUES ('No Seasonality', 1), ('Spring Cleaning', 1), ('Default Profile', 2);
+VALUES ('No Seasonality', 1), ('Check Profile', 1), ('Spring Cleaning', 1), ('Default Profile', 2);
 
 -- Item
 
 INSERT INTO Item
-    (ItemName, ClientID, BrandID, CatID, GroupID, CurrentProfile)
+    (ItemName, ClientID, BrandID, CatID, GroupID, DefaultPrice, DefaultNumStores, CurrentProfile)
 VALUES
-    ('Cleaner Foaming Spray 13oz', 1, 1, 1, 1, 1),
-    ('Cleaner Liquid 14oz', 1, 1, 1, 2, 1),
-    ('Cleaner Liquid 64oz', 1, 1, 1, 2, 1),
-    ('Cleaner Specialty Canister 9oz', 1, 1, 1, 3, 1),
-    ('Cleaner Specialty Foaming Spray 16oz', 1, 1, 1, 1, 1),
-    ('Cleaner Specialty Liquid 21oz', 1, 1, 1, 2, 1),
+    ('Cleaner Foaming Spray 13oz', 1, 1, 1, 1, 3.13, xxx, 1),
+    ('Cleaner Liquid 14oz', 1, 1, 1, 2, 3.87, xxx, 1),
+    ('Cleaner Liquid 64oz', 1, 1, 1, 2, 16.51, xxx, 1),
+    ('Cleaner Specialty Canister 9oz', 1, 1, 1, 3,6.53, xxx, 1),
+    ('Cleaner Specialty Foaming Spray 16oz', 1, 1, 1, 1, 4.02, xxx, 1),
+    ('Cleaner Specialty Liquid 21oz', 1, 1, 1, 2, 6.07, xxx, 1),
     ('Experimental Foaming Cleaner', 2, 3, 1, 4, 3);
 
 -- WMWeeks
@@ -567,4 +567,57 @@ VALUES
 (1,50,1.0),
 (1,51,1.0),
 (1,52,1.0),
-(1,53,1.0);
+(1,53,1.0),
+(2,1,1.0),
+(2,2,2.0),
+(2,3,3.0),
+(2,4,4.0),
+(2,5,5.0),
+(2,6,6.0),
+(2,7,7.0),
+(2,8,8.0),
+(2,9,9.0),
+(2,10,10.0),
+(2,11,11.0),
+(2,12,12.0),
+(2,13,13.0),
+(2,14,14.0),
+(2,15,15.0),
+(2,16,16.0),
+(2,17,17.0),
+(2,18,18.0),
+(2,19,19.0),
+(2,20,20.0),
+(2,21,21.0),
+(2,22,22.0),
+(2,23,23.0),
+(2,24,24.0),
+(2,25,25.0),
+(2,26,26.0),
+(2,27,27.0),
+(2,28,28.0),
+(2,29,29.0),
+(2,30,30.0),
+(2,31,31.0),
+(2,32,32.0),
+(2,33,33.0),
+(2,34,34.0),
+(2,35,35.0),
+(2,36,36.0),
+(2,37,37.0),
+(2,38,38.0),
+(2,39,39.0),
+(2,40,40.0),
+(2,41,41.0),
+(2,42,42.0),
+(2,43,43.0),
+(2,44,44.0),
+(2,45,45.0),
+(2,46,46.0),
+(2,47,47.0),
+(2,48,48.0),
+(2,49,49.0),
+(2,50,50.0),
+(2,51,51.0),
+(2,52,52.0),
+(2,53,53.0);
