@@ -26,15 +26,15 @@ VALUES ('No Seasonality', 1), ('Check Profile', 1), ('Spring Cleaning', 1), ('De
 -- Item
 
 INSERT INTO Item
-    (ItemName, ClientID, BrandID, CatID, GroupID, DefaultPrice, DefaultNumStores, CurrentProfile)
+    (ItemName, ClientID, BrandID, CatID, GroupID, DefaultPrice, CurrentProfile)
 VALUES
-    ('Cleaner Foaming Spray 13oz', 1, 1, 1, 1, 3.13, xxx, 1),
-    ('Cleaner Liquid 14oz', 1, 1, 1, 2, 3.87, xxx, 1),
-    ('Cleaner Liquid 64oz', 1, 1, 1, 2, 16.51, xxx, 1),
-    ('Cleaner Specialty Canister 9oz', 1, 1, 1, 3,6.53, xxx, 1),
-    ('Cleaner Specialty Foaming Spray 16oz', 1, 1, 1, 1, 4.02, xxx, 1),
-    ('Cleaner Specialty Liquid 21oz', 1, 1, 1, 2, 6.07, xxx, 1),
-    ('Experimental Foaming Cleaner', 2, 3, 1, 4, 3);
+    ('Cleaner Foaming Spray 13oz', 1, 1, 1, 1, 3.13, 1),
+    ('Cleaner Liquid 14oz', 1, 1, 1, 2, 3.87, 1),
+    ('Cleaner Liquid 64oz', 1, 1, 1, 2, 16.51, 1),
+    ('Cleaner Specialty Canister 9oz', 1, 1, 1, 3,6.53, 1),
+    ('Cleaner Specialty Foaming Spray 16oz', 1, 1, 1, 1, 4.02, 1),
+    ('Cleaner Specialty Liquid 21oz', 1, 1, 1, 2, 6.07, 1),
+    ('Experimental Foaming Cleaner', 2, 3, 1, 4, 5.29, 4);
 
 -- WMWeeks
 

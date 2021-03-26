@@ -39,7 +39,6 @@ CREATE TABLE Item
     CatID INT FOREIGN KEY REFERENCES ProductCategory(CatID),
     GroupID INT FOREIGN KEY REFERENCES ProductGroup(GroupID),
     DefaultPrice DECIMAL(6,2) NOT NULL,
-    DefaultNumStores INT NOT NULL,
     CurrentProfile INT FOREIGN KEY REFERENCES SeasonalProfile(ProfileID),
     IsCurrentProd CHAR(1) NOT NULL DEFAULT 'Y'
 )
@@ -84,7 +83,6 @@ CREATE TABLE Forecast
     ForecastPrice DECIMAL(15,2) DEFAULT 1.00,
     PriceUpdateFlag CHAR(1) NOT NULL DEFAULT 'N',
     ForecastStores INT DEFAULT 0,
-    StoreUpdateFlag CHAR(1) NOT NULL DEFAULT 'N',
     ItemAdjust INT NOT NULL DEFAULT 0,
     FactorAdjust DECIMAL(3,1) NOT NULL DEFAULT 1,
     LeadTime INT

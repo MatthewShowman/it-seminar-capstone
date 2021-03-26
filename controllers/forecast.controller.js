@@ -5,26 +5,49 @@ const ForecastServices = require('../services/forecast.service');
 const HistoricalServices = require('../services/historical.service');
 
 async function getItemForecast(itemID){
-    // Check that the number of future weeks is 52.
-    // if the number is less than 52 --> create the needed future weeks
-        // check how many weeks are needed.
-        // create a loop to produce that many weeks
-        // build each week
-        // submit each week to the DB via SQL
-    let numberOfCalWeeks = await WMWeekServices.getFutureWMWeeksCount();
+    /*
+        1. Get the current WM_Year.
+        2. Check if the current WM_Year has 52 weeks.
+        3. If the number of weeks is 52, go to the next check.
+        4. If the number of weeks is LESS THAN 52, CREATE the needed weeks.
+            a. Check how many weeks are needed.
+            b. Build a loop to produce that number of weeks.
+            c. Build each week.
+            d. Submit each week to the DB.
+    
+    */
+    let currentWeek = await WMWeekServices.getCurrentWeek();
+    let currentWM_Year = currentWeek.WM_Year;
+    let currentWMWeekNum = currentWeek.WM_WeekNum;
+    
+    let numberOfCalWeeks = await WMWeekServices.getYearWMWeeksCount(currentWM_Year);
+    
     if (numberOfCalWeeks < 52) {
         await WMWeekServices.buildNeededWeeks(numberOfCalWeeks);
     }
-    // if the number IS 52, check to that the item forecast has 52 weeks
-        // if the item forecast has less than 52 weeks --> create the needed weeks
-            // check how many weeks are needed.
-            // create a loop to produce that many weeks
-            // build each week
-            // submit each week to the DB via SQL
-  
-    let numberOfForecastWeeks = await ForecastServices.getUpcomingForecastCount(itemID);
+
+    if (currentWMWeekNum = 48) {
+        let nextWM_YearInt = (currentWM_Year * 1) + 1;
+        let nextWM_Year = nextWM_YearInt.toString();
+        let numberOfFutureCalWeeks = WMWeekServices.getYearWMWeeksCount(nextWM_Year);
+        if (numberOfFutureCalWeeks != 52) {
+            await WMWeekServices.buildNeededWeeks(numberOfFutureCalWeeks);
+        }
+    }
+
+    /*
+    1. Get the number of forecasts for the item.
+    2. Check if the forcast has 52 weeks.
+    3. If the number of forecast weeks is LESS THAN 52, CREATE the needed weeks.
+        a. Check how many weeks are needed.
+        b. Build a loop to produce that number of weeks.
+        c. Build each week.
+        d. Submit each week to the DB.
+    */
+
+    let numberOfForecastWeeks = await ForecastServices.getForecastCount(itemID, currentWM_Year);
     if (numberOfForecastWeeks < 52) {
-        await ForecastServices.addToForecast(itemID);
+        await ForecastServices.addToForecast(itemID, numberOfForecastWeeks);
     }
 
     // if the number of future WMWeek = 52 AND Forecast weeks = 52 --> return the forecast. 

@@ -125,7 +125,7 @@ router.route('/test/getLastForecast').get((req, res) => {
 })
 
 router.route('/test/buildNeededWeeks').get((req, res) => {
-    WMWeekServices.buildNeededWeeks(numberOfWeeks).then(result => {
+    WMWeekServices.buildNeededWeeks(req.query.numberOfWeeks).then(result => {
         console.log(result);
         res.json(result);
     })
@@ -161,9 +161,9 @@ router.route('/test/buildNewForecast').post((req, res) => {
     })
 })
 
-router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {
+router.route('/test/getForecastCount').get((req, res) => {
     ;
-    ForecastServices.getUpcomingForecastCount(req.params.id).then(result => {
+    ForecastServices.getForecastCount(req.query.item, req.query.year).then(result => {
         console.log(result);
         res.json(result);
     })
@@ -172,6 +172,14 @@ router.route('/test/getCountOfForecastWeeks/:id').get((req, res) => {
 router.route('/test/createForecastFromHistorical').get((req, res) => {
     ;
     ForecastServices.createForecastFromHistorical(req.query.id).then(result => {
+        console.log(result);
+        res.json(result);
+    })
+})
+
+router.route('/test/getCurrentYearWMWeeksCount').get((req, res) => {
+    ;
+    WMWeekServices.getCurrentYearWMWeeksCount(req.query.year).then(result => {
         console.log(result);
         res.json(result);
     })

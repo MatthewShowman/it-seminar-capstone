@@ -61,6 +61,19 @@ async function getFutureWMWeeksCount(){
     }
 }
 
+async function getYearWMWeeksCount(year){
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('WM_Year', sql.Char, year)        
+            .query('SELECT COUNT(*) as weekCount FROM WMWeek WHERE WM_Year = @WM_Year');
+        return item.recordsets[0][0].weekCount;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 async function getCurrentWeek() {
     try {
         let pool = await sql.connect(config);
@@ -129,6 +142,7 @@ async function buildNeededWeeks(numberOfWeeks){
 
 module.exports = {
     getFutureWMWeeksCount : getFutureWMWeeksCount,
+    getYearWMWeeksCount : getYearWMWeeksCount,
     getCurrentWeek : getCurrentWeek,
     getLastFutureWeek : getLastFutureWeek,
     transitionToNextWeek : transitionToNextWeek,

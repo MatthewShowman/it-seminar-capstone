@@ -20,7 +20,7 @@ async function getBrandList(ClientID){
 
 // GET all of the products belonging to one client
 async function getProductList(ClientID){
-    let itemList = await ItemServices.getCompletItemList(ClientID);
+    let itemList = await ItemServices.getCompleteItemList(ClientID);
     let profileNames = await ProfileServices.getClientProfiles(ClientID);
     return [itemList, profileNames];
 }

@@ -30,15 +30,13 @@ async function getLastItemHistory(itemID) {
 }
 
 async function getVelocity(itemID, year) {
-    let targetYear = year;
-    if (targetYear == '') {
-        let newTargetYear = await WMWeekServices.getCurrentWeek();
-        if (newTargetYear.WM_Year == '2021') {
-            targetYear = '2019';
-        } else {
-            let calculatedYear = Number(newTargetYear) - 1;
-            targetYear = calculatedYear.toString();
-        }
+    let currentYear = year;
+    let targetYear = '';
+    if (currentYear == '2021') {
+        targetYear = '2019';
+    } else {
+        let lastYear = Number(currentYear) - 1;
+        targetYear = lastYear.toString();
     }
 
     try {
