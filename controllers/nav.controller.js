@@ -53,6 +53,7 @@ async function addItemGetter(ClientID){
     return [clientBrands, productCategories,productGroups, seasonalProfile];
 }
 
+
 module.exports = {
     getClientList : getClientList,
     getBrandList : getBrandList,

@@ -3,7 +3,6 @@ let config = require('../mssql.utils');
 const ClientServices = require('../services/client.service');
 const ItemServices = require('../services/item.service');
 const ForecastServices = require('../services/forecast.service');
-const WMWeekServices = require('../services/wm-week.service');
 const ProfileServies = require('../services/profile.service');
 
 
@@ -29,6 +28,19 @@ async function addItem(newItemObj){
 
     await ForecastServices.addNewItemForecast(newItemObj);
     return ItemServices.getSingleItem(newItemID);
+}
+
+
+async function createNewProfile(profile, profileDataArray) {
+    /*
+        1. ClientID and a Profile name are needed to complete a SeasonalProfile record
+        2. WeekNum and SeasonalFactors for 52 weeks are needed to complete a ProfileData record
+            a. Ideally the factors would be the only data and the app could iterate through weeks
+            b. Presently I can't guarentee the roder the the front-end is passing back, so....
+    */
+    let newProfileID = await ProfileServies.createProfile(profile.ClientID, profile.ProfileName);
+    await ProfileServies.createProfileData(newProfileID, profileDataArray);
+    return await ProfileServies.getClientProfiles(profile.ClientID);
 }
 
 
@@ -71,51 +83,10 @@ async function updateItemForecast(forecastUpdateObj) {
     return updatedRecord[0];
 }
 
-async function createNewProfile(profile, profileDataArray) {
-    let newProfileID = await ProfileServies.createProfile(profile.ClientID, profile.ProfileName);
-    await ProfileServies.createProfileData(newProfileID, profileDataArray);
-    return await ProfileServies.getClientProfiles(profile.ClientID);
-}
-
-/* async function addWeek(newWeek){ 
-    try {
-        let pool = await sql.connect(config);
-        let insertWeek = await pool.request()
-            .input('WMWeek', sql.VarChar, newWeek.WMWeek)
-            .input('FiscalYear', sql.VarChar, newWeek.FiscalYear)
-            .input('WeekStart', sql.DateTime, newWeek.WeekStart)
-            .input('Month', sql.VarChar, newWeek.Month)
-            .input('Season', sql.VarChar, newWeek.Season)
-            .query('INSERT INTO Dates (WMWeek, FiscalYear, WeekStart, Month, Season) VALUES (@WMWeek, @FiscalYear, @WeekStart, @Month, @Season)');
-        return insertWeek.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
-async function addHistorical(newRecord){
-    try {
-        let pool = await sql.connect(config);
-        let insertHistorical = await pool.request()
-            .input('WMWeek', sql.VarChar, newRecord.WMWeek)
-            .input('ItemID', sql.Int, newRecord.ItemID)
-            .input('UnitCost', sql.Decimal(10,2), newRecord.UnitCost)
-            .input('StoreCount', sql.Int, newRecord.StoreCount)
-            .input('POSQuantity', sql.Int, newRecord.POSQuantity)
-            .query('INSERT INTO Historical (WMWeek, ItemID, UnitCost, StoreCount, POSQuantity) VALUES (@WMWeek, @ItemID, @UnitCost, @StoreCount, @POSQuantity)');
-        return insertHistorical.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    }
-} */
 
 module.exports = {
     addItem : addItem,
     updateItemInfo : updateItemInfo,
     updateItemForecast :updateItemForecast,
     createNewProfile : createNewProfile
-    /* addWeek : addWeek,
-    addHistorical : addHistorical */
 }

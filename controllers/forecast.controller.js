@@ -57,34 +57,7 @@ async function getItemForecast(itemID){
     return itemForecast;
 }
 
-/* async function getItemDefaultProfile(ItemID){
-    try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, ItemID)
-            .query('SELECT * FROM SalesProfile WHERE ItemID = @IdParam AND isDefaultProfile = 1');
-        return item.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
-async function getAllProfilesForItem(ItemID){
-    try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, ItemID)
-            .query('SELECT * FROM SalesProfile WHERE ItemID = 1 OR isGeneral = 1');
-        return item.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    }
-} */
 
 module.exports = {
-    //getItemDefaultProfile : getItemDefaultProfile,
-    //getAllProfilesForItem : getAllProfilesForItem,
     getItemForecast : getItemForecast
 }
