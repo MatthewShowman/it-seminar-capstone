@@ -187,6 +187,19 @@ async function getItemForecast(itemID) {
         console.log(error);
     }
 }
+async function getSingleForecastRecord(WMWeekCode, itemID) {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('IdParam', sql.Int, itemID)
+            .input('WMWeekCode', sql.Int, WMWeekCode)
+            .query('SELECT * FROM Forecast WHERE ItemID = @IdParam AND WMWeekCode = @WMWeekCode');
+        return item.recordsets[0];
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
 
 async function updateDefaultForecastPrice(itemID, newPrice) {
     let currentWMWeek = await WMWeekServices.getCurrentWeek();
@@ -207,6 +220,45 @@ async function updateDefaultForecastPrice(itemID, newPrice) {
         console.log(error);
     }
 }
+/*
+    These attributes can be updated at the week level:
+        Forecast Price
+        Forecast Stores
+        Item Adjustment
+        Factor Adjustment
+        Lead Time
+    This function requires the item ID
+*/ 
+async function updateForecast(forecastObj) {
+    let forecastRecord = await getSingleForecastRecord(forecastObj.WMWeekCode, forecastObj.ItemID);
+    let priceFlag = 'N';
+    
+    if (forecastRecord.ForecastPrice != forecastObj.ForecastPrice) {
+        priceFlag = 'Y'
+    }
+
+    try {
+        let pool = await sql.connect(config);
+        let updateItem = await pool.request()
+            .input('ItemID', sql.Int, forecastObj.ItemID)
+            .input('WMWeekCode', sql.Int, forecastObj.WMWeekCode)
+            .input('ForecastPrice', sql.Decimal(15,2), forecastObj.ForecastPrice)
+            .input('AddFlag', sql.Char, priceFlag)
+            .input('ForecastStores', sql.Int, forecastObj.ForecastStores)
+            .input('ItemAdjust', sql.Int, forecastObj.ItemAdjust)
+            .input('FactorAdjust', sql.Decimal(3,1), forecastObj.FactorAdjust)
+            .input('LeadTime', sql.Int, forecastObj.LeadTime)
+            .query('UPDATE Forecast ' +
+                    'SET ForecastPrice = @ForecastPrice, PriceUpdateFlag = @AddFlag, ForecastStores = @ForecastStores, ' +
+                        'ItemAdjust = @ItemAdjust, FactorAdjust = @FactorAdjust, LeadTime = @LeadTime ' +
+                    'WHERE ItemID = @ItemID AND WMWeekCode = @WMWeekCode');
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+    return await getSingleForecastRecord(forecastObj.WMWeekCode, forecastObj.ItemID);
+}
 
 module.exports = {
     //getUpcomingForecastCount : getUpcomingForecastCount,
@@ -216,5 +268,6 @@ module.exports = {
     addNewItemForecast : addNewItemForecast,
     getItemForecast : getItemForecast, //OK
     createForecastFromHistorical : createForecastFromHistorical, //OK
-    updateDefaultForecastPrice : updateDefaultForecastPrice
+    updateDefaultForecastPrice : updateDefaultForecastPrice,
+    updateForecast : updateForecast
 }
