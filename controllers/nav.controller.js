@@ -26,6 +26,12 @@ async function getProductList(ClientID){
     return [itemList, profileNames];
 }
 
+// GET all profiles belonging to one client
+async function getProfileList(ClientID){
+    let profileNames = await ProfileServices.getClientProfiles(ClientID);
+    return profileNames;
+}
+
 // GET all available product categories
 async function getProductCategories(){
     let productCategories = await GeneralServices.getAllProductCategories();
@@ -51,6 +57,7 @@ module.exports = {
     getClientList : getClientList,
     getBrandList : getBrandList,
     getProductList : getProductList,
+    getProfileList : getProfileList,
     getProductCategories: getProductCategories,
     getProductGroups: getProductGroups,
     addItemGetter: addItemGetter

@@ -42,6 +42,11 @@ router.route('/products/add/:id').get((req, res) => {
     })
 })
 
+router.route('/profiles/:id').get((req, res) => {
+    navController.getProfileList(req.params.id).then(result => {
+        res.json(result);
+    })
+})
 
 // Forecast Data Routes
 
@@ -69,17 +74,31 @@ router.route('/products/historical-data/:id').get((req, res) => {
 
 // Updating Ops
 router.route('/products/add/').post((req, res) => {
-    newItemObj = { ...req.body };
+    let newItemObj = { ...req.body };
     updateController.addItem(newItemObj).then(result => {
         res.status(201).json(result);
     })
 })
 
 router.route('/products/update/').post((req, res) => {
-    ItemObj = { ...req.body };
-    updateController.updateItemInfo(ItemObj).then(result => {
-        console.log(result);
+    let itemObj = { ...req.body };
+    updateController.updateItemInfo(itemObj).then(result => {
         res.status(201).json(result);
+    })
+})
+
+router.route('/products/forecast/update/').post((req, res) => {
+    let forecastObj = { ...req.body };
+    updateController.updateItemForecast(forecastObj).then(result => {
+        res.json(result);
+    })
+})
+
+router.route('/profiles/add/').post((req, res) => {
+    let profile = req.body.profile;
+    let profileData = req.body.profileData;
+    updateController.createNewProfile(profile, profileData).then(result => {
+        res.json(result);
     })
 })
 

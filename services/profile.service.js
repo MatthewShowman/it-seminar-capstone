@@ -14,6 +14,43 @@ async function getClientProfiles(clientID) {
     }
 }
 
+async function createProfile(clientID, profileName) {
+    try {
+        let pool = await sql.connect(config);
+        let newProfile = await pool.request()
+            .input('ClientID', sql.Int, clientID)
+            .input('ProfileName', sql.VarChar, profileName)
+            .query('INSERT INTO SeasonalProfile (ProfileName, ClientID) ' +
+                    'OUTPUT inserted.ProfileID ' +
+                    'VALUES (@ProfileName, @ClientID)');
+        return newProfile.recordset[0].ProfileID;;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+async function createProfileData(profileID, profileDataArray) {
+    for(i = 0; i < profileDataArray.length; i++) {
+        let weekData = profileDataArray[i];
+        try {
+            let pool = await sql.connect(config);
+            let profileWeek = await pool.request()
+                .input('ProfileID', sql.Int, profileID)
+                .input('WeekNum', sql.VarChar, weekData.WeekNum)
+                .input('SeasonFactor', sql.Decimal(3,1), weekData.SeasonFactor)
+                .query('INSERT INTO ProfileData (ProfileID, WeekNum, SeasonFactor) ' +
+                        'VALUES (@ProfileID, @WeekNum, @SeasonFactor)');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    return true;
+}
+
 module.exports = {
-    getClientProfiles : getClientProfiles
+    getClientProfiles : getClientProfiles,
+    createProfile : createProfile,
+    createProfileData : createProfileData
 }

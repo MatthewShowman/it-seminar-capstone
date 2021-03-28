@@ -4,6 +4,7 @@ const ClientServices = require('../services/client.service');
 const ItemServices = require('../services/item.service');
 const ForecastServices = require('../services/forecast.service');
 const WMWeekServices = require('../services/wm-week.service');
+const ProfileServies = require('../services/profile.service');
 
 
 async function addItem(newItemObj){ 
@@ -56,7 +57,27 @@ async function updateItemInfo(itemUpdateObj) {
     return updatedItem;
 }
 
-async function addWeek(newWeek){ 
+/*
+    These attributes can be updated at the week level:
+        Forecast Price
+        Forecast Stores
+        Item Adjustment
+        Factor Adjustment
+        Lead Time
+    This function requires the item ID
+*/ 
+async function updateItemForecast(forecastUpdateObj) {
+    let updatedRecord = await ForecastServices.updateForecast(forecastUpdateObj);
+    return updatedRecord[0];
+}
+
+async function createNewProfile(profile, profileDataArray) {
+    let newProfileID = await ProfileServies.createProfile(profile.ClientID, profile.ProfileName);
+    await ProfileServies.createProfileData(newProfileID, profileDataArray);
+    return await ProfileServies.getClientProfiles(profile.ClientID);
+}
+
+/* async function addWeek(newWeek){ 
     try {
         let pool = await sql.connect(config);
         let insertWeek = await pool.request()
@@ -88,11 +109,13 @@ async function addHistorical(newRecord){
     catch (error) {
         console.log(error);
     }
-}
+} */
 
 module.exports = {
     addItem : addItem,
     updateItemInfo : updateItemInfo,
-    addWeek : addWeek,
-    addHistorical : addHistorical
+    updateItemForecast :updateItemForecast,
+    createNewProfile : createNewProfile
+    /* addWeek : addWeek,
+    addHistorical : addHistorical */
 }
