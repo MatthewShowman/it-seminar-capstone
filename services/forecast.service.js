@@ -104,7 +104,7 @@ async function addForecastRecord(newForecastRecord) {
             .input('ItemID', sql.Int, newForecastRecord.ItemID)
             .input('WMWeekCode', sql.Int, newForecastRecord.WMWeekCode)
             .input('Velocity', sql.Decimal(3,1), newForecastRecord.Velocity)
-            .input('ForecastPrice', sql.Decimal(15,2), newForecastRecord.ForecastPrice)
+            .input('ForecastPrice', sql.Decimal(6,2), newForecastRecord.ForecastPrice)
             .input('ForecastStores', sql.Int, newForecastRecord.ForecastStores)
             .input('LeadTime', sql.Int, newForecastRecord.LeadTime)
             .query('INSERT INTO Forecast (ItemID, WMWeekCode, Velocity, ForecastPrice, ForecastStores, LeadTime) VALUES (@ItemID, @WMWeekCode, @Velocity, @ForecastPrice, @ForecastStores, @LeadTime)');
@@ -208,7 +208,7 @@ async function updateDefaultForecastPrice(itemID, newPrice) {
         let pool = await sql.connect(config);
         let updateItem = await pool.request()
             .input('ItemID', sql.Int, itemID)
-            .input('NewPrice', sql.Decimal(15,2), newPrice)
+            .input('NewPrice', sql.Decimal(6,2), newPrice)
             .input('WMWeekCode', sql.Int, currentWMWeek.WMWeekCode)
             .input('NoFlag', sql.Char, 'N')
             .query('UPDATE Forecast ' +
@@ -242,7 +242,7 @@ async function updateForecast(forecastObj) {
         let updateItem = await pool.request()
             .input('ItemID', sql.Int, forecastObj.ItemID)
             .input('WMWeekCode', sql.Int, forecastObj.WMWeekCode)
-            .input('ForecastPrice', sql.Decimal(15,2), forecastObj.ForecastPrice)
+            .input('ForecastPrice', sql.Decimal(6,2), forecastObj.ForecastPrice)
             .input('AddFlag', sql.Char, priceFlag)
             .input('ForecastStores', sql.Int, forecastObj.ForecastStores)
             .input('ItemAdjust', sql.Int, forecastObj.ItemAdjust)

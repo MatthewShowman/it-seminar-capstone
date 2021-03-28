@@ -80,7 +80,7 @@ CREATE TABLE Forecast
     ItemID INT FOREIGN KEY REFERENCES Item(ItemID) DEFAULT NULL,
     WMWeekCode INT FOREIGN KEY REFERENCES WMWeek(WMWeekCode) NOT NULL,
     Velocity DECIMAL(3,1) NOT NULL,
-    ForecastPrice DECIMAL(15,2) DEFAULT 1.00,
+    ForecastPrice DECIMAL(6,2) DEFAULT 1.00,
     PriceUpdateFlag CHAR(1) NOT NULL DEFAULT 'N',
     ForecastStores INT DEFAULT 0,
     ItemAdjust INT NOT NULL DEFAULT 0,
