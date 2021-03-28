@@ -48,6 +48,7 @@ router.route('/profiles/:id').get((req, res) => {
     })
 })
 
+
 // Forecast Data Routes
 
 // Route to READ one year of forecast data for one object
@@ -72,7 +73,11 @@ router.route('/products/historical-data/:id').get((req, res) => {
 
 
 
-// Updating Ops
+// Functional Routes (Adding and Updating)
+
+// ITEMS
+
+// Add a new product and create the initial forecast
 router.route('/products/add/').post((req, res) => {
     let newItemObj = { ...req.body };
     updateController.addItem(newItemObj).then(result => {
@@ -80,6 +85,7 @@ router.route('/products/add/').post((req, res) => {
     })
 })
 
+// Update product-level edits
 router.route('/products/update/').post((req, res) => {
     let itemObj = { ...req.body };
     updateController.updateItemInfo(itemObj).then(result => {
@@ -87,6 +93,7 @@ router.route('/products/update/').post((req, res) => {
     })
 })
 
+// Update weekly-forecast-level changes
 router.route('/products/forecast/update/').post((req, res) => {
     let forecastObj = { ...req.body };
     updateController.updateItemForecast(forecastObj).then(result => {
@@ -94,6 +101,9 @@ router.route('/products/forecast/update/').post((req, res) => {
     })
 })
 
+// PROFILES
+
+// Add (1) SeasonalProfile record and (2) 52 weeks of ProfileData
 router.route('/profiles/add/').post((req, res) => {
     let profile = req.body.profile;
     let profileData = req.body.profileData;
@@ -102,25 +112,10 @@ router.route('/profiles/add/').post((req, res) => {
     })
 })
 
-/* router.route('/update/add-week').post((req, res) => {
-    newWeek = { ...req.body };
-    updateController.addWeek(newWeek).then(result => {
-        console.log(result);
-        res.status(201).json(result);
-    })
-})
-
-router.route('/update/add-historical').post((req, res) => {
-    console.log(req.body);
-    newRecord = { ...req.body };
-    updateController.addHistorical(newRecord).then(result => {
-        console.log(result);
-        res.status(201).json(result);
-    })
-}) */
 
 
 // TESTING ROUTES
+// THESE NEED TO BE DELETED BEFORE FINISHING
 
 router.route('/test/getHistorical').get((req, res) => {
     services.getHistoricalData(req.query.id, req.query.year).then(result => {
