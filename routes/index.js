@@ -3,7 +3,6 @@ const navController = require('../controllers/nav.controller');
 const forecastController = require('../controllers/forecast.controller');
 const updateController = require('../controllers/update.controller');
 
-const services = require('../services');
 const WMWeekServices = require('../services/wm-week.service');
 const ProfileServices = require('../services/profile.service');
 const ForecastServices = require('../services/forecast.service');
@@ -35,6 +34,14 @@ router.route('/products/:id').get((req, res) => {
     })
 })
 
+// Route to get to the add item page
+// Returns an array with info to help populate the new item (i.e. brand, category, and group)
+router.route('/products/add/:id').get((req, res) => {
+    navController.addItemGetter(req.params.id).then(result => {
+        res.json(result);
+    })
+})
+
 
 // Forecast Data Routes
 
@@ -61,15 +68,22 @@ router.route('/products/historical-data/:id').get((req, res) => {
 
 
 // Updating Ops
-router.route('/products/add').post((req, res) => {
-    newItem = { ...req.body };
-    updateController.addItem(newItem).then(result => {
+router.route('/products/add/').post((req, res) => {
+    newItemObj = { ...req.body };
+    updateController.addItem(newItemObj).then(result => {
+        res.status(201).json(result);
+    })
+})
+
+router.route('/products/update/').post((req, res) => {
+    ItemObj = { ...req.body };
+    updateController.updateItemInfo(ItemObj).then(result => {
         console.log(result);
         res.status(201).json(result);
     })
 })
 
-router.route('/update/add-week').post((req, res) => {
+/* router.route('/update/add-week').post((req, res) => {
     newWeek = { ...req.body };
     updateController.addWeek(newWeek).then(result => {
         console.log(result);
@@ -84,7 +98,7 @@ router.route('/update/add-historical').post((req, res) => {
         console.log(result);
         res.status(201).json(result);
     })
-})
+}) */
 
 
 // TESTING ROUTES

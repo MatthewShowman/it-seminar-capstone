@@ -4,7 +4,7 @@ const config = require('../mssql.utils');
 async function getAllClients() {
     try {
         let pool = await sql.connect(config);
-        let items = await pool.request().query('SELECT * FROM Client ORDER BY ClientName')
+        let items = await pool.request().query('SELECT * FROM Client ORDER BY ClientName');
         return items.recordsets[0];
     }
     catch (error) {
@@ -12,20 +12,35 @@ async function getAllClients() {
     }
 }
 
-async function getClientBrands(ClientID) {
+async function getClientBrands(clientID) {
     try {
         let pool = await sql.connect(config);
         let items = await pool.request()
-            .input('IdParam', sql.Int, ClientID)
-            .query('SELECT * FROM Brand WHERE ClientID = @IdParam ORDER BY BrandName')
-        return items.recordsets;
+            .input('IdParam', sql.Int, clientID)
+            .query('SELECT * FROM Brand WHERE ClientID = @IdParam ORDER BY BrandName');
+        return items.recordsets[0];
     }
     catch (error) {
         console.log(error);
     }
 }
 
+async function getClientProfiles(clientID) {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('ClientID', sql.Int, clientID)
+            .query('SELECT * FROM SeasonalProfile WHERE ClientID = @ClientID ORDER BY ProfileName');
+        return item.recordsets[0];
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+
 module.exports = {
     getAllClients : getAllClients,
-    getClientBrands : getClientBrands
+    getClientBrands : getClientBrands,
+    getClientProfiles : getClientProfiles
 }

@@ -1,22 +1,59 @@
 const sql = require('mssql');
 let config = require('../mssql.utils');
+const ClientServices = require('../services/client.service');
+const ItemServices = require('../services/item.service');
+const ForecastServices = require('../services/forecast.service');
+const WMWeekServices = require('../services/wm-week.service');
 
-async function addItem(newItem){ 
-    try {
-        let pool = await sql.connect(config);
-        let insertItem = await pool.request()
-            .input('Alias', sql.VarChar, newItem.Alias)
-            .input('Sku', sql.VarChar, newItem.Sku)
-            .input('SizeOZ', sql.Decimal(10,2), newItem.SizeOZ)
-            .input('ItemGroup', sql.VarChar, newItem.ItemGroup)
-            .input('Category', sql.VarChar, newItem.Category)
-            .input('BrandID', sql.Int, newItem.BrandID)
-            .query('INSERT INTO Item (Alias, Sku, SizeOZ, ItemGroup, Category, BrandID) VALUES (@Alias, @Sku, @SizeOZ, @ItemGroup, @Category, @BrandID)');
-        return insertItem.recordsets;
+
+async function addItem(newItemObj){ 
+    /*
+        Get item details
+            1. ItemName
+            2. BrandID
+            3. ClientID
+            4. CatID
+            5. GroupID
+            6. DefaultPrice
+            7. CurrentProfile DEFAULT = No Seasonality
+        Set initial Forcast Data
+            8. ForecastStores
+            9. LeadTime
+        Organize the data.
+        Add the Item
+        Create the forecast
+    */
+    let newItemID = await ItemServices.createNewItem(newItemObj);
+    newItemObj.ItemID = newItemID;
+
+    await ForecastServices.addNewItemForecast(newItemObj);
+    return ItemServices.getSingleItem(newItemID);
+}
+
+
+/*
+    These attributes can be updated at the item level:
+        ItemName
+        Brand
+        Category
+        Group
+        Price
+        Seasonal Profile
+    This function requires the item ID
+*/ 
+async function updateItemInfo(itemUpdateObj) {
+    let previousItem = await ItemServices.getSingleItem(itemUpdateObj.ItemID);
+    await ItemServices.updateItem(itemUpdateObj);
+    let updatedItem = await ItemServices.getSingleItem(itemUpdateObj.ItemID);
+
+    console.log(previousItem[0].DefaultPrice);
+    console.log(updatedItem[0].DefaultPrice);
+
+    if (previousItem[0].DefaultPrice != updatedItem[0].DefaultPrice) {
+        await ForecastServices.updateDefaultForecastPrice(itemUpdateObj.ItemID, itemUpdateObj.DefaultPrice);
     }
-    catch (error) {
-        console.log(error);
-    }
+
+    return updatedItem;
 }
 
 async function addWeek(newWeek){ 
@@ -55,6 +92,7 @@ async function addHistorical(newRecord){
 
 module.exports = {
     addItem : addItem,
+    updateItemInfo : updateItemInfo,
     addWeek : addWeek,
     addHistorical : addHistorical
 }

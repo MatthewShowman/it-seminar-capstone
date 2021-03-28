@@ -3,6 +3,7 @@ const config = require('../mssql.utils');
 const ClientServices = require('../services/client.service');
 const ItemServices = require('../services/item.service');
 const ProfileServices = require('../services/profile.service');
+const GeneralServices = require('../services/general.service');
 
 
 // GET all the clients from the client table
@@ -25,8 +26,32 @@ async function getProductList(ClientID){
     return [itemList, profileNames];
 }
 
+// GET all available product categories
+async function getProductCategories(){
+    let productCategories = await GeneralServices.getAllProductCategories();
+    return productCategories;
+}
+
+// GET all available product groups
+async function getProductGroups(){
+    let productGroups = await GeneralServices.getAllProductGroups();
+    return productGroups;
+}
+
+// Get all the data needed to assist adding a new item/product to a client's product list
+async function addItemGetter(ClientID){
+    let clientBrands = await ClientServices.getClientBrands(ClientID);
+    let productCategories = await GeneralServices.getAllProductCategories();
+    let productGroups = await GeneralServices.getAllProductGroups();
+    let seasonalProfile = await ClientServices.getClientProfiles(ClientID);
+    return [clientBrands, productCategories,productGroups, seasonalProfile];
+}
+
 module.exports = {
     getClientList : getClientList,
     getBrandList : getBrandList,
-    getProductList : getProductList
+    getProductList : getProductList,
+    getProductCategories: getProductCategories,
+    getProductGroups: getProductGroups,
+    addItemGetter: addItemGetter
 }

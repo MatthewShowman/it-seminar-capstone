@@ -149,22 +149,17 @@ async function addToForecast(itemID, numberOfForcastWeeks) {
     }
 }
 
-async function buildNewForecast(forecastParams) {
-    let itemID = forecastParams.ItemID
+async function addNewItemForecast(newItemObj) {
     let currentWMWeek = await WMWeekServices.getCurrentWeek();
-    let itemVelocity = await HistoricalServices.getVelocity(itemID, forecastParams.targetYear);
-    let initialPrice = forecastParams.price;
-    let initialStores = forecastParams.stores;
-    let leadTime = forecastParams.leadTime;
+    let currentWMWeekCode = currentWMWeek.WMWeekCode;
+    
+    let newBaseForecast = baseForecastBuilder(newItemObj.ItemID, currentWMWeekCode, 1.0 , newItemObj.ForecastPrice, newItemObj.ForecastStores, newItemObj.LeadTime);
 
-    let newBaseForecast = baseForecastBuilder(itemID, currentWMWeek.WMWeekCode, itemVelocity, initialPrice, initialStores, leadTime);
-
-    currentWMWeekCode = currentWMWeek.WMWeekCode;
-    for (i = 0; i < 52; i++) {
+    for (i = currentWMWeek.WM_WeekNum; i <= 52; i++) {
         let newForecastRecord = newBaseForecast;
+        await addForecastRecord(newForecastRecord);
         currentWMWeekCode = WMWeekServices.transitionToNextWeek(currentWMWeekCode);
         newForecastRecord.WMWeekCode = currentWMWeekCode;
-        await addForecastRecord(newForecastRecord);
     }
 }
 
@@ -193,12 +188,33 @@ async function getItemForecast(itemID) {
     }
 }
 
+async function updateDefaultForecastPrice(itemID, newPrice) {
+    let currentWMWeek = await WMWeekServices.getCurrentWeek();
+
+    try {
+        let pool = await sql.connect(config);
+        let updateItem = await pool.request()
+            .input('ItemID', sql.Int, itemID)
+            .input('NewPrice', sql.Decimal(15,2), newPrice)
+            .input('WMWeekCode', sql.Int, currentWMWeek.WMWeekCode)
+            .input('NoFlag', sql.Char, 'N')
+            .query('UPDATE Forecast ' +
+                    'SET ForecastPrice = @NewPrice ' +
+                    'WHERE ItemID = @ItemID AND WMWeekCode >= @WMWeekCode AND PriceUpdateFlag = @NoFlag');
+        return updateItem;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     //getUpcomingForecastCount : getUpcomingForecastCount,
-    getForecastCount : getForecastCount,
-    addForecastRecord : addForecastRecord,
-    addToForecast : addToForecast,
-    buildNewForecast : buildNewForecast,
-    getItemForecast : getItemForecast,
-    createForecastFromHistorical : createForecastFromHistorical
+    getForecastCount : getForecastCount, //OK
+    addForecastRecord : addForecastRecord, //OK
+    addToForecast : addToForecast, //OK
+    addNewItemForecast : addNewItemForecast,
+    getItemForecast : getItemForecast, //OK
+    createForecastFromHistorical : createForecastFromHistorical, //OK
+    updateDefaultForecastPrice : updateDefaultForecastPrice
 }

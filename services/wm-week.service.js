@@ -128,7 +128,8 @@ async function addWeek(newWeek){
 }
 
 
-async function buildNeededWeeks(numberOfWeeks){
+async function buildNeededWeeks(numberOfWeeks) {
+    
     let weeksToBuild = 52 - numberOfWeeks;
     let lastCalWeek = await getLastFutureWeek();
     let nextWeek = lastCalWeek;

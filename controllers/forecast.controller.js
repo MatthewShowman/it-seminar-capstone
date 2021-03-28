@@ -10,16 +10,15 @@ async function getItemForecast(itemID){
         2. Check if the current WM_Year has 52 weeks.
         3. If the number of weeks is 52, go to the next check.
         4. If the number of weeks is LESS THAN 52, CREATE the needed weeks.
-            a. Check how many weeks are needed.
+            a. Check how many Total weeks are needed.
             b. Build a loop to produce that number of weeks.
             c. Build each week.
             d. Submit each week to the DB.
-    
     */
+
     let currentWeek = await WMWeekServices.getCurrentWeek();
     let currentWM_Year = currentWeek.WM_Year;
-    let currentWMWeekNum = currentWeek.WM_WeekNum;
-    
+    //let currentWMWeekNum = currentWeek.WM_WeekNum;
     let numberOfCalWeeks = await WMWeekServices.getYearWMWeeksCount(currentWM_Year);
     
     if (numberOfCalWeeks < 52) {
@@ -36,17 +35,20 @@ async function getItemForecast(itemID){
     }
 
     /*
-    1. Get the number of forecasts for the item.
-    2. Check if the forcast has 52 weeks.
-    3. If the number of forecast weeks is LESS THAN 52, CREATE the needed weeks.
-        a. Check how many weeks are needed.
-        b. Build a loop to produce that number of weeks.
-        c. Build each week.
-        d. Submit each week to the DB.
+        1. Get the number of forecasts for the item.
+        2. Check if the forecast has 52 weeks.
+        3. If the number of forecast weeks is LESS THAN 52, check for an item history
+        4. If the item HAS a history:
+            a. Check how many weeks are needed.
+            b. Build a loop to produce that number of weeks.
+            c. Build each week.
+            d. Submit each week to the DB.
+        5. If the item DOES NOT HAVE a history (i.e. a new product)
+            a. Continue. The forecast should have been build when the new item was entered
     */
-
+    let itemHistory = HistoricalServices.getItemHistory(itemID)
     let numberOfForecastWeeks = await ForecastServices.getForecastCount(itemID, currentWM_Year);
-    if (numberOfForecastWeeks < 52) {
+    if (itemHistory && numberOfForecastWeeks < 52) {
         await ForecastServices.addToForecast(itemID, numberOfForecastWeeks);
     }
 
@@ -55,12 +57,7 @@ async function getItemForecast(itemID){
     return itemForecast;
 }
 
-async function getHistoricalData(ItemID){
-    let itemHistory = await HistoricalServices.getItemHistory(ItemID);
-    return itemHistory;
- }
-
-async function getItemDefaultProfile(ItemID){
+/* async function getItemDefaultProfile(ItemID){
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
@@ -84,11 +81,10 @@ async function getAllProfilesForItem(ItemID){
     catch (error) {
         console.log(error);
     }
-}
+} */
 
 module.exports = {
-    getHistoricalData : getHistoricalData,
-    getItemDefaultProfile : getItemDefaultProfile,
-    getAllProfilesForItem : getAllProfilesForItem,
+    //getItemDefaultProfile : getItemDefaultProfile,
+    //getAllProfilesForItem : getAllProfilesForItem,
     getItemForecast : getItemForecast
 }
