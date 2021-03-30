@@ -65,7 +65,7 @@ router.route('/products/forecast/:id').get((req, res) => {
 // Route to READ hostorical data for one item
 // Returns an array of all history objects for one item
 router.route('/products/historical-data/:id').get((req, res) => {
-    forecastController.getHistoricalData(req.params.id).then(result => {
+    navController.getHistoricalData(req.params.id).then(result => {
         console.log(result);
         res.json(result);
     })

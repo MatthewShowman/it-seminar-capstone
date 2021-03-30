@@ -4,7 +4,7 @@ const WMWeekServices = require('../services/wm-week.service');
 const ForecastServices = require('../services/forecast.service');
 const HistoricalServices = require('../services/historical.service');
 
-async function getItemForecast(itemID){
+async function getItemForecast(itemID) {
     /*
         1. Get the current WM_Year.
         2. Check if the current WM_Year has 52 weeks.
@@ -20,7 +20,7 @@ async function getItemForecast(itemID){
     let currentWM_Year = currentWeek.WM_Year;
     //let currentWMWeekNum = currentWeek.WM_WeekNum;
     let numberOfCalWeeks = await WMWeekServices.getYearWMWeeksCount(currentWM_Year);
-    
+
     if (numberOfCalWeeks < 52) {
         await WMWeekServices.buildNeededWeeks(numberOfCalWeeks);
     }
@@ -59,5 +59,5 @@ async function getItemForecast(itemID){
 
 
 module.exports = {
-    getItemForecast : getItemForecast
+    getItemForecast: getItemForecast
 }
