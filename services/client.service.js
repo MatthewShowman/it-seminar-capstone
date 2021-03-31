@@ -37,10 +37,26 @@ async function getClientProfiles(clientID) {
         console.log(error);
     }
 }
+async function createNewClient(clientName) {
+    try {
+        let pool = await sql.connect(config);
+        let insertClient = await pool.request()
+            .input('ClientName', sql.VarChar, clientName)
+            .query('INSERT INTO Client (ClientName) ' +
+                'OUTPUT inserted.ClientID ' +
+                'VALUES (@ClientName)');
+        return insertClient.recordset[0].ClientID;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 module.exports = {
-    getAllClients : getAllClients,
-    getClientBrands : getClientBrands,
-    getClientProfiles : getClientProfiles
+    getAllClients: getAllClients,
+    getClientBrands: getClientBrands,
+    getClientProfiles: getClientProfiles,
+    createNewClient: createNewClient
 }
