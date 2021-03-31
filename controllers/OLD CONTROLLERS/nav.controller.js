@@ -1,10 +1,10 @@
 const sql = require('mssql');
-const config = require('../mssql.utils');
-const ClientServices = require('../services/client.service');
-const ItemServices = require('../services/item.service');
-const ProfileServices = require('../services/profile.service');
-const GeneralServices = require('../services/general.service');
-const HistoricalServices = require('../services/historical.service');
+const config = require('../../mssql.utils');
+const ClientServices = require('../../services/client.service');
+const ItemServices = require('../../services/item.service');
+const ProfileServices = require('../../services/profile.service');
+const GeneralServices = require('../../services/general.service');
+const HistoricalServices = require('../../services/historical.service');
 
 
 // GET all the clients from the client table

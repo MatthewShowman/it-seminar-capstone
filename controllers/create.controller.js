@@ -6,6 +6,15 @@ const ForecastServices = require('../services/forecast.service');
 const ProfileServies = require('../services/profile.service');
 
 
+async function addClient(clientName) {
+    let newClientId = await ClientServices.createNewClient(clientName);
+    let profileID = await ProfileServies.createProfile(newClientId, 'No Seasonality');
+    let newDefaultProfile = await ProfileServies.createDefaultProfileData(profileID);
+    await ProfileServies.createProfileData(profileID, newDefaultProfile);
+    return newClientId;
+}
+
+
 async function addItem(newItemObj) {
     /*
         Get item details
@@ -44,47 +53,8 @@ async function createNewProfile(profile, profileDataArray) {
 }
 
 
-/*
-    These attributes can be updated at the item level:
-        ItemName
-        Brand
-        Category
-        Group
-        Price
-        Seasonal Profile
-    This function requires the item ID
-*/
-async function updateItemInfo(itemUpdateObj) {
-    let previousItem = await ItemServices.getSingleItem(itemUpdateObj.ItemID);
-    await ItemServices.updateItem(itemUpdateObj);
-    let updatedItem = await ItemServices.getSingleItem(itemUpdateObj.ItemID);
-
-    console.log(previousItem[0].DefaultPrice);
-    console.log(updatedItem[0].DefaultPrice);
-
-    if (previousItem[0].DefaultPrice != updatedItem[0].DefaultPrice) {
-        await ForecastServices.updateDefaultForecastPrice(itemUpdateObj.ItemID, itemUpdateObj.DefaultPrice);
-    }
-
-    return updatedItem;
-}
-
-/*
-    These attributes can be updated at the week level:
-        Forecast Price
-        Forecast Stores
-        Item Adjustment
-        Factor Adjustment
-        Lead Time
-    This function requires the item ID
-*/
-async function updateItemForecast(forecastUpdateObj) {
-    let updatedRecord = await ForecastServices.updateForecast(forecastUpdateObj);
-    return updatedRecord[0];
-}
-
-
 module.exports = {
-    updateItemInfo: updateItemInfo,
-    updateItemForecast: updateItemForecast,
+    addClient: addClient,
+    addItem: addItem,
+    createNewProfile: createNewProfile,
 }
