@@ -50,7 +50,8 @@ async function getProductGroups() {
 // GET the historical data for an item
 async function getHistoricalData(itemID) {
     let historicalData = await HistoricalServices.getItemHistory(itemID);
-    return historicalData;
+    let item = await ItemServices.getSingleItem(itemID)
+    return { "historicalData": historicalData, "ClientID": item[0].ClientID };
 }
 
 // Get all the data needed to assist adding a new item/product to a client's product list
