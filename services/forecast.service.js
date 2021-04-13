@@ -271,6 +271,25 @@ async function updateForecast(forecastObj) {
     return await getSingleForecastRecord(forecastObj.WMWeekCode, forecastObj.ItemID);
 }
 
+function prepForecastChart(forecastObject) {
+    let itemChartData = { "data": [] };
+    let costChartData = { "data": [] };
+    for (let i = 0; i < forecastObject.length; i++) {
+        let currentWeekData = forecastObject[i];
+        let forecastItems = currentWeekData.Velocity * currentWeekData.ForecastStores * currentWeekData.SeasonFactor * currentWeekData.FactorAdjust + currentWeekData.ItemAdjust;
+        let forecastCost = forecastItems * currentWeekData.ForecastPrice;
+
+        let dateItemObject = { "x": currentWeekData.WMWeekCode, "y": forecastItems };
+        itemChartData.data.push(dateItemObject);
+
+        let dateCostObject = { "x": currentWeekData.WMWeekCode, "y": forecastCost };
+        costChartData.data.push(dateCostObject);
+    }
+
+    return [itemChartData, costChartData]
+}
+
+
 module.exports = {
     //getUpcomingForecastCount : getUpcomingForecastCount,
     getForecastCount: getForecastCount, //OK
@@ -280,5 +299,6 @@ module.exports = {
     getItemForecast: getItemForecast, //OK
     createForecastFromHistorical: createForecastFromHistorical, //OK
     updateDefaultForecastPrice: updateDefaultForecastPrice,
-    updateForecast: updateForecast
+    updateForecast: updateForecast,
+    prepForecastChart: prepForecastChart
 }

@@ -114,7 +114,8 @@ async function getItemForecast(itemID) {
 
     // if the number of future WMWeek = 52 AND Forecast weeks = 52 --> return the forecast. 
     let itemForecast = await ForecastServices.getItemForecast(itemID);
-    return itemForecast;
+    let forecastChartData = ForecastServices.prepForecastChart(itemForecast);
+    return { "itemForecast": itemForecast, "itemChartData": forecastChartData[0], "costChartData": forecastChartData[1] };
 }
 
 
