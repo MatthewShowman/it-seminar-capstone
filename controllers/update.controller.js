@@ -42,8 +42,23 @@ async function updateItemForecast(forecastUpdateObj) {
     return updatedRecord[0];
 }
 
+async function updateProfile(profile, profileDataArray) {
+    /*
+        1. ClientID and a Profile name are needed to complete a SeasonalProfile record
+        2. WeekNum and SeasonalFactors for 52 weeks are needed to complete a ProfileData record
+            a. Ideally the factors would be the only data and the app could iterate through weeks
+            b. Presently I can't guarentee the roder the the front-end is passing back, so....
+    */
+    await ProfileServies.updateProfile(profile.ProfileID, profile.ProfileName);
+    await ProfileServies.updateProfileData(profile.ProfileID, profileDataArray);
+    let updatedProfile = await ProfileServies.getSingleProfile(profile.ProfileID);
+    let updatedProfileData = await ProfileServies.getSingleProfileData(profile.ProfileID);
+    return [updatedProfile, updatedProfileData];
+}
+
 
 module.exports = {
     updateItemInfo: updateItemInfo,
     updateItemForecast: updateItemForecast,
+    updateProfile: updateProfile
 }
