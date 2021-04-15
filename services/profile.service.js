@@ -14,6 +14,33 @@ async function getClientProfiles(clientID) {
     }
 }
 
+async function getSingleProfile(ProfileID) {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('ProfileIdParam', sql.Int, ProfileID)
+            .query('SELECT * FROM SeasonalProfile WHERE ProfileID = @ProfileIdParam');
+        return item.recordsets[0][0];
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+async function getSingleProfileData(ProfileID) {
+    try {
+        let pool = await sql.connect(config);
+        let item = await pool.request()
+            .input('ProfileIdParam', sql.Int, ProfileID)
+            .query('SELECT ProfileID, WeekNum, SeasonFactor ' +
+                'FROM ProfileData WHERE ProfileID = @ProfileIdParam ORDER BY WeekNum');
+        return item.recordsets[0];
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 async function createProfile(clientID, profileName) {
     try {
         let pool = await sql.connect(config);
@@ -60,9 +87,49 @@ function createDefaultProfileData(profileID) {
     return profileDataArray;
 }
 
+async function updateProfile(profileID, profileName) {
+    try {
+        let pool = await sql.connect(config);
+        let updatedProfile = await pool.request()
+            .input('ProfileID', sql.Int, profileID)
+            .input('ProfileName', sql.VarChar, profileName)
+            .query('UPDATE SeasonalProfile ' +
+                'SET ProfileName = @ProfileName ' +
+                'WHERE ProfileID = @ProfileID');
+        return true;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+async function updateProfileData(profileID, profileDataArray) {
+    for (i = 0; i < profileDataArray.length; i++) {
+        let weekData = profileDataArray[i];
+        try {
+            let pool = await sql.connect(config);
+            let profileWeek = await pool.request()
+                .input('ProfileID', sql.Int, profileID)
+                .input('WeekNum', sql.VarChar, weekData.WeekNum)
+                .input('SeasonFactor', sql.Decimal(3, 1), weekData.SeasonFactor)
+                .query('UPDATE ProfileData ' +
+                    'SET SeasonFactor = @SeasonFactor ' +
+                    'WHERE ProfileID = @ProfileID AND WeekNum = @WeekNum');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    return true;
+}
+
 module.exports = {
     getClientProfiles: getClientProfiles,
+    getSingleProfile: getSingleProfile,
+    getSingleProfileData: getSingleProfileData,
     createProfile: createProfile,
     createProfileData: createProfileData,
     createDefaultProfileData: createDefaultProfileData,
+    updateProfile: updateProfile,
+    updateProfileData: updateProfileData
 }
