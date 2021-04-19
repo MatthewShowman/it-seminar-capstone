@@ -58,7 +58,7 @@ async function getVelocity(itemID, year) {
 }
 
 module.exports = {
-    getItemHistory : getItemHistory,
-    getLastItemHistory : getLastItemHistory,
-    getVelocity : getVelocity
+    getItemHistory: getItemHistory,
+    getLastItemHistory: getLastItemHistory,
+    getVelocity: getVelocity
 }

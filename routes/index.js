@@ -46,6 +46,14 @@ router.route('/profiles/:id').get((req, res) => {
     })
 })
 
+// Route to READ ONE profile available for one client
+// Returns an array [profile, profileData]
+router.route('/profiles/view/:id').get((req, res) => {
+    readController.getProfile(req.params.id).then(result => {
+        res.json(result);
+    })
+})
+
 // Route to READ hostorical data for one item
 // Returns an array of all history objects for one item
 router.route('/products/historical-data/:id').get((req, res) => {
@@ -93,11 +101,11 @@ router.route('/products/add/').post((req, res) => {
     })
 })
 
-// CREATE (1) SeasonalProfile record and (2) 52 weeks of ProfileData
-router.route('/profiles/add/').post((req, res) => {
+// UPDATE (1) SeasonalProfile record and (2) 52 weeks of ProfileData
+router.route('/profiles/update/').post((req, res) => {
     let profile = req.body.profile;
     let profileData = req.body.profileData;
-    createController.createNewProfile(profile, profileData).then(result => {
+    createController.UpdateProfile(profile, profileData).then(result => {
         res.json(result);
     })
 })
@@ -123,6 +131,15 @@ router.route('/products/forecast/update/').post((req, res) => {
         res.json(result);
     })
 })
+// UPDATE (1) SeasonalProfile record and (2) 52 weeks of ProfileData
+router.route('/profiles/view/').post((req, res) => {
+    let profile = req.body.profile;
+    let profileData = req.body.profileData;
+    updateController.updateProfile(profile, profileData).then(result => {
+        res.json(result);
+    })
+})
+
 
 
 

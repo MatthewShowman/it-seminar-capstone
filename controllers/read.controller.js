@@ -35,6 +35,13 @@ async function getProfileList(ClientID) {
     return profileNames;
 }
 
+// GET ONE profiles belonging to one client
+async function getProfile(ProfileID) {
+    let profile = await ProfileServices.getSingleProfile(ProfileID);
+    let profileData = await ProfileServices.getSingleProfileData(ProfileID);
+    return [profile, profileData];
+}
+
 // GET all available product categories
 async function getProductCategories() {
     let productCategories = await GeneralServices.getAllProductCategories();
@@ -50,7 +57,8 @@ async function getProductGroups() {
 // GET the historical data for an item
 async function getHistoricalData(itemID) {
     let historicalData = await HistoricalServices.getItemHistory(itemID);
-    return historicalData;
+    let item = await ItemServices.getSingleItem(itemID)
+    return { "historicalData": historicalData, "ClientID": item[0].ClientID };
 }
 
 // Get all the data needed to assist adding a new item/product to a client's product list
@@ -113,7 +121,8 @@ async function getItemForecast(itemID) {
 
     // if the number of future WMWeek = 52 AND Forecast weeks = 52 --> return the forecast. 
     let itemForecast = await ForecastServices.getItemForecast(itemID);
-    return itemForecast;
+    let forecastChartData = ForecastServices.prepForecastChart(itemForecast);
+    return { "itemForecast": itemForecast, "itemChartData": forecastChartData[0], "costChartData": forecastChartData[1] };
 }
 
 
@@ -122,6 +131,7 @@ module.exports = {
     getBrandList: getBrandList,
     getProductList: getProductList,
     getProfileList: getProfileList,
+    getProfile: getProfile,
     getProductCategories: getProductCategories,
     getProductGroups: getProductGroups,
     getHistoricalData: getHistoricalData,
