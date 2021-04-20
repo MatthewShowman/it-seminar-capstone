@@ -92,7 +92,7 @@ async function createForecastFromHistorical(itemID) {
     let currentWMWeek = await WMWeekServices.getCurrentWeek();
     let WMWeekCodeChar = currentWMWeek.WM_Year + '00';
     let WMWeekCodeInt = Number(WMWeekCodeChar);
-    let itemVelocity = await HistoricalServices.getVelocity();
+    let itemVelocity = await HistoricalServices.getVelocity(itemID, currentWMWeek.WM_Year);
     let proxyForecast = baseForecastBuilder(itemID, WMWeekCodeInt, itemVelocity, lastHistoricalRecord.ItemPrice, lastHistoricalRecord.POS_Stores,);
     return proxyForecast;
 }

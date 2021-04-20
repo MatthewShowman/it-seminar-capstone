@@ -7,6 +7,7 @@ const WMWeekServices = require('../services/wm-week.service');
 const ProfileServices = require('../services/profile.service');
 const ForecastServices = require('../services/forecast.service');
 const HistoricalServices = require('../services/historical.service');
+const historicalService = require('../services/historical.service');
 
 
 
