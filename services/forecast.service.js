@@ -164,19 +164,21 @@ async function addNewItemForecast(newItemObj) {
 }
 
 async function getItemForecast(itemID) {
-    let lastHistoricalRecord = await HistoricalServices.getLastItemHistory(itemID);
-    let itemsSold = lastHistoricalRecord.POS_Items;
+    //let lastHistoricalRecord = await HistoricalServices.getLastItemHistory(itemID);
+    //let itemsSold = lastHistoricalRecord.POS_Items;
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, itemID)
-            .input('BaseItems', sql.Int, itemsSold)
+            //.input('BaseItems', sql.Int, itemsSold)
             .query('DECLARE @WM_Year CHAR(4) ' +
                 'SET @WM_Year = (SELECT WM_Year FROM WMWeek WHERE CalStartDate ' +
                 'BETWEEN DATEADD(week,-1,GETDATE()) AND GETDATE()) ' +
                 'SELECT i.ClientID, i.ItemID, f.WMWeekCode, w.WM_WeekNum, ' +
                 'f.Velocity, p.SeasonFactor, f.ForecastPrice, f.ForecastStores, ' +
-                'f.LeadTime, f.ItemAdjust, f.FactorAdjust, @BaseItems AS BaseItems ' +
+                'f.LeadTime, f.ItemAdjust, f.FactorAdjust, ' +
+                '((f.Velocity * f.ForecastStores * p.SeasonFactor * f.FactorAdjust) + f.ItemAdjust) AS TotalUnits, ' +
+                '((f.Velocity * f.ForecastStores * p.SeasonFactor * f.FactorAdjust * f.ForecastPrice) + f.ItemAdjust) AS TotalCost ' +
                 'FROM Forecast f ' +
                 'JOIN ITEM i ON f.ItemID = i.ItemID ' +
                 'JOIN SeasonalProfile s ON i.CurrentProfile = s.ProfileID ' +
@@ -279,8 +281,8 @@ function prepForecastChart(forecastObject) {
     let costChartData = { "data": [] };
     for (let i = 0; i < forecastObject.length; i++) {
         let currentWeekData = forecastObject[i];
-        let forecastItems = currentWeekData.Velocity * currentWeekData.ForecastStores * currentWeekData.SeasonFactor * currentWeekData.FactorAdjust + currentWeekData.ItemAdjust;
-        let forecastCost = forecastItems * currentWeekData.ForecastPrice;
+        let forecastItems = currentWeekData.TotalUnits;
+        let forecastCost = currentWeekData.TotalCost;
 
         let dateItemObject = { "x": currentWeekData.WMWeekCode, "y": forecastItems };
         itemChartData.data.push(dateItemObject);
