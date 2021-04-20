@@ -164,13 +164,10 @@ async function addNewItemForecast(newItemObj) {
 }
 
 async function getItemForecast(itemID) {
-    //let lastHistoricalRecord = await HistoricalServices.getLastItemHistory(itemID);
-    //let itemsSold = lastHistoricalRecord.POS_Items;
     try {
         let pool = await sql.connect(config);
         let item = await pool.request()
             .input('IdParam', sql.Int, itemID)
-            //.input('BaseItems', sql.Int, itemsSold)
             .query('DECLARE @WM_Year CHAR(4) ' +
                 'SET @WM_Year = (SELECT WM_Year FROM WMWeek WHERE CalStartDate ' +
                 'BETWEEN DATEADD(week,-1,GETDATE()) AND GETDATE()) ' +
