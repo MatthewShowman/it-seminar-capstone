@@ -1,5 +1,5 @@
 // Node Modules
-const express  = require('express');
+const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -17,7 +17,8 @@ const app = express();
 
 //app.use(bodyParser.json());
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('UI'));
 //app.use(cors());
 app.use(session({
     secret: ['garrulous gazelle'],
@@ -30,7 +31,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Connect to the app routes
-app.use('/',routes);
+app.use('/', routes);
 
 
 app.use(function (err, req, res, next) {
