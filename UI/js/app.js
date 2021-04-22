@@ -1,4 +1,5 @@
-import {getItemHistory} from './historical.service.js';
+// import {getItemHistory} from './config.js';
+
 //Getting the save button 
 const SAVEITEM = document.getElementById('save-btn-item');
 
@@ -22,7 +23,29 @@ const FORECASTBTN = document.querySelectorAll('.field.forecast');
 //--------------------------------------------------------------------------------------------
 
 // this is just a JSON object 
-var idElement = [{
+const options = {
+    method: 'GET',
+};
+
+function fetchHistoricalData (){
+    var historicalData;
+fetch ('/products/historical-data/1',options)
+.then (result => result.json())
+.then (function(data){
+    historicalData = data["historicalData"]
+    console.log(historicalData);
+});
+};
+
+fetchHistoricalData();
+
+
+// .then ((data) => {
+//     console.log(data.ItemID);
+// });
+
+
+var idElement =[{
     "ItemID":1,
     "ItemName": "Item 1",
     "BrandID":1,

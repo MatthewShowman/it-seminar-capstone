@@ -59,7 +59,7 @@ router.route('/profiles/view/:id').get((req, res) => {
 // Returns an array of all history objects for one item
 router.route('/products/historical-data/:id').get((req, res) => {
     readController.getHistoricalData(req.params.id).then(result => {
-        console.log(result);
+        console.log('this is it' + result);
         res.json(result);
     })
 })
