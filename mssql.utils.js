@@ -9,10 +9,10 @@ When I used to use MongoDB (and mongoose), I had to create these.
  */
 
 const mssqlConfig = {
-    user: 'ISYS5943HG',
-    password: 'GohogsUA1!',
-    server: 'essql1.walton.uark.edu',
-    database: 'ISYS5943HG',
+    user: 'sa',
+    password: 'Alejandro741852!?',
+    server: 'localhost',
+    database: 'local_sand',
     /*    user: 'SA',
         password: 'practiceDB123',
         server: 'localhost',

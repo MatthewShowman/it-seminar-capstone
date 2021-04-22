@@ -1,12 +1,4 @@
-//Hitorical Data
-// -- Import the controllers GetProductList 
-// import {getClientList,getBrandList,getProductList,getProfileList,getProductCategories,getProductGroups,getHistoricalData,getItemForecast,addItemGetter} from 'controllers/read.controller.js'
-// import { getCompleteItemList } from '../../../services/item.service';
-// const sql = require('mssql');
-// const config = require('../mssql.utils');
-
-//var xhr = new XMLHttpRequest ();
-
+import {getItemHistory} from './historical.service.js';
 //Getting the save button 
 const SAVEITEM = document.getElementById('save-btn-item');
 
@@ -185,7 +177,7 @@ var forecastLegth = forecastObject.length;
 var _length = idElement.length;
 
 // this function creates all the necessary HTML elements for each object in the array and adds data t othe fields
-function createItemRowAndAddData (el, id) {
+async function createItemRowAndAddData (el, id) {
     // constructor to build a retrun object to run query 
     function rowElement (_itemID) {
         this.ItemID = _itemID
@@ -282,7 +274,7 @@ document.getElementById(fieldID).options.length=0;
         option.text = val.charAt(0) + val.slice(1);
         currentProfileListField.appendChild(option);
     }
-    console.log('these are the current profiles: ' + seasonalProfileArray);
+    //console.log('these are the current profiles: ' + seasonalProfileArray);
     
 
 }

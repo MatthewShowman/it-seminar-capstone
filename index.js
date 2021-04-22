@@ -18,7 +18,8 @@ const app = express();
 //app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('./UI'));
+app.use("/UI", express.static('./UI/'));
+app.use(express.static('./UI/'));
 //app.use(cors());
 app.use(session({
     secret: ['garrulous gazelle'],
