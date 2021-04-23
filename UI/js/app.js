@@ -5,16 +5,32 @@ const SAVEITEM = document.getElementById('save-btn-item');
 
 //Gettin the new item button 
 const NEWITEMBTN = document.getElementById('new-item-btn');
-
+//Gettin the close new item button 
+const CLOSEMODAL = document.getElementById('close-modal');
 //Getting the forecast buttons 
 const FORECASTBTN = document.querySelectorAll('.field.forecast');
+// getting the add new item btn 
+const ADDNEWITEMBTN = document.getElementById('add-new-item-btn');
+//Event listeners for the buttons
+NEWITEMBTN.addEventListener('click', showAddNewItemModal);
+CLOSEMODAL.addEventListener('click',closeAddNewItemModal);
+ADDNEWITEMBTN.addEventListener('click', addNewItemToDataBase);
+// getting the modal element 
+const MODAL = document.getElementById('modal-overlay');
+//function to show the modal
+async function showAddNewItemModal () {
+    MODAL.classList.remove('hidden');
+};
 
-//Event listeners for the buttons 
-// SAVEBTN.addEventListener('click');
-// NEWITEMBTN.addEventListener('click');
-// for (const button of FORECASTBTN) {
-//     button.addEventListener('click', forecastRow)
-// };
+//function to close the modal 
+async function closeAddNewItemModal () {
+    MODAL.classList.add('hidden');
+};
+// function to add new item to db 
+async function addNewItemToDataBase () {
+    closeAddNewItemModal();
+    //add functionality here to fetch post 
+}
 
 
 
@@ -22,22 +38,10 @@ const FORECASTBTN = document.querySelectorAll('.field.forecast');
 //------------------------------ Item Management Tab -----------------------------------------
 //--------------------------------------------------------------------------------------------
 
-// this is just a JSON object 
+// options for fetching the data 
 const options = {
     method: 'GET',
 };
-
-function fetchHistoricalData (){
-    var historicalData;
-fetch ('/products/historical-data/1',options)
-.then (result => result.json())
-.then (function(data){
-    historicalData = data["historicalData"]
-    console.log(historicalData);
-});
-};
-
-fetchHistoricalData();
 
 
 // .then ((data) => {
@@ -113,68 +117,7 @@ var idElement =[{
     "Current Stores": 4575,
     "IsCurrentProd": "Y"
 }];
-var forecastObject = [
-    {
-        "ItemID": 1,
-        "WMWeekCode": 202101,
-        "WM_WeekNum": 1,
-        "Velocity": 1,
-        "SeasonFactor": 1,
-        "ForecastPrice": 3.13,
-        "ForecastStores": 4575,
-        "LeadTime": null,
-        "ItemAdjust": 0,
-        "FactorAdjust": 1
-    },
-    {
-        "ItemID": 1,
-        "WMWeekCode": 202102,
-        "WM_WeekNum": 2,
-        "Velocity": 1,
-        "SeasonFactor": 1,
-        "ForecastPrice": 3.13,
-        "ForecastStores": 4575,
-        "LeadTime": null,
-        "ItemAdjust": 0,
-        "FactorAdjust": 1
-    },
-    {
-        "ItemID": 1,
-        "WMWeekCode": 202103,
-        "WM_WeekNum": 3,
-        "Velocity": 1,
-        "SeasonFactor": 1,
-        "ForecastPrice": 3.13,
-        "ForecastStores": 4575,
-        "LeadTime": null,
-        "ItemAdjust": 0,
-        "FactorAdjust": 1
-    },
-    {
-        "ItemID": 1,
-        "WMWeekCode": 202104,
-        "WM_WeekNum": 4,
-        "Velocity": 1,
-        "SeasonFactor": 1,
-        "ForecastPrice": 3.13,
-        "ForecastStores": 4575,
-        "LeadTime": null,
-        "ItemAdjust": 0,
-        "FactorAdjust": 1
-    },
-    {
-        "ItemID": 1,
-        "WMWeekCode": 202105,
-        "WM_WeekNum": 5,
-        "Velocity": 1,
-        "SeasonFactor": 1,
-        "ForecastPrice": 3.13,
-        "ForecastStores": 4575,
-        "LeadTime": null,
-        "ItemAdjust": 0,
-        "FactorAdjust": 1
-    }
-];
+
 //This is just a dummy object for the seasonal profile list
 var seasonalProfileObject = [
     {
@@ -194,9 +137,9 @@ var seasonalProfileObject = [
 var row = [];
 
 
-// forecast object length
-var forecastLegth = forecastObject.length;
-// id element length 
+// // forecast object length
+// var forecastLegth = forecastObject.length;
+// // id element length 
 var _length = idElement.length;
 
 // this function creates all the necessary HTML elements for each object in the array and adds data t othe fields
@@ -324,6 +267,7 @@ async function getCurrentRow (_clickedId) {
 // on load do all this 
 window.onload = function () {
     hideProfileFields();
+    fetchHistoricalData(2);
     let indexOf = 0;
     let idOf = 0;
     let forecastInd = 0;
@@ -333,12 +277,7 @@ window.onload = function () {
         indexOf++;
         idOf++;
     };
-    // this iterates through the forecast objects and runs the create forecast item and add data function 
-    // -- this should be removed from the onload event and should be place in the forecast on click event!!!!!!!!!!!
-    for (var g = 0; g < forecastLegth; g++) {
-        createForecastRowAndAddData(forecastInd)
-        forecastInd++;
-    };
+
 };
 // the empty array declared as global 
 var saveItemDataArray = [];
@@ -385,102 +324,121 @@ async function saveAllItemData () {
 //--------------------------------------------------------------------------------------------
 //------------------------------ Forecast Tab -------------------------------------------------
 //--------------------------------------------------------------------------------------------
-
+// async function to fetch the historical data :: parameter is the ID of the item 
+async function fetchHistoricalData (idIn){
+    // wait for the fletch to complete 
+    await fetch (`/products/forecast/${idIn}`,options)
+    .then (result => result.json())
+    .then (function(data){
+        forecastObject = data["itemForecast"]
+        // this function will create each HTML element for each data field
+        function createForecastTableandAddData(dataIndexIn) {
+            var _forecastIndex = dataIndexIn; 
+            // creating some default values 
+            var _defaultAdjustment = 0;
+            var _defaultFactor = 1;
+        
+            //getting the parent for the grid 
+            var _forecastParent = document.getElementById('forecast-grid');
+            // creating the WMWeeks and adding data to it 
+            var _forecastWMWeeksField = document.createElement('div');
+            _forecastWMWeeksField.className = 'field';
+            _forecastWMWeeksField.id = `w-weeks${_forecastIndex}`;
+            _forecastWMWeeksField.innerText = forecastObject[_forecastIndex].WMWeekCode;
+            _forecastParent.appendChild(_forecastWMWeeksField);
+        
+            // creating the POSStores field and adding data to it
+            var _forecastPOSStoresField = document.createElement('div');
+            _forecastPOSStoresField.className = 'field';
+            _forecastPOSStoresField.id = `pos-store${_forecastIndex}`;
+            _forecastPOSStoresField.innerText = forecastObject[_forecastIndex].ForecastStores;
+            console.log('stores: '+_forecastPOSStoresField.textContent);
+            _forecastParent.appendChild(_forecastPOSStoresField);
+        
+            // creating the Velocity field and adding data to it
+        
+            var _forecastVelocityField = document.createElement('div');
+            _forecastVelocityField.className = 'field';
+            _forecastVelocityField.id = `velocity${_forecastIndex}`;
+            _forecastVelocityField.innerText = forecastObject[_forecastIndex].Velocity;
+            _forecastParent.appendChild(_forecastVelocityField);
+        
+            // creating the Seasonality Factor field and adding data to it
+            var _forecastSeasonalFactorField = document.createElement('div');
+            _forecastSeasonalFactorField.className = 'field';
+            _forecastSeasonalFactorField.id = `seasonal-profile${_forecastIndex}`;
+            _forecastSeasonalFactorField.innerText = forecastObject[_forecastIndex].SeasonFactor;
+            _forecastParent.appendChild(_forecastSeasonalFactorField);
+        
+            // creating the cost field and adding data to it
+            var _forecastCostField = document.createElement('INPUT');
+            _forecastCostField.setAttribute('type','number');
+            _forecastCostField.className = 'field allowChange';
+            _forecastCostField.id = `cost-field${_forecastIndex}`;
+            _forecastCostField.setAttribute ('onChange', `reCalcForecastTotalUnitsAndCost(${_forecastIndex})`);
+            _forecastCostField.defaultValue = 1;
+            _forecastParent.appendChild(_forecastCostField);
+        
+            // creating the Manual Adjustment field and adding data to it
+            var _forecastManAdjField = document.createElement('INPUT');
+            _forecastManAdjField.setAttribute('type','number');
+            _forecastManAdjField.className = 'field allowChange';
+            _forecastManAdjField.id = `man-adjust${_forecastIndex}`;
+            _forecastManAdjField.setAttribute ('onChange', `reCalcForecastTotalUnitsAndCost(${_forecastIndex})`);
+            _forecastManAdjField.defaultValue = _defaultAdjustment;
+            _forecastParent.appendChild(_forecastManAdjField);
+        
+            // creating the Factor field and adding data to it
+            var _forecastFactorField = document.createElement('INPUT');
+            _forecastFactorField.setAttribute('type','number');
+            _forecastFactorField.className = 'field allowChange';
+            _forecastFactorField.id = `factor-field${_forecastIndex}`;
+            _forecastFactorField.setAttribute ('onChange', `reCalcForecastTotalUnitsAndCost(${_forecastIndex})`);
+            _forecastFactorField.defaultValue = _defaultFactor;
+            _forecastParent.appendChild(_forecastFactorField);
+        
+            // creating the price field 
+            var _forecastPriceField = document.createElement('INPUT');
+            _forecastPriceField.setAttribute('type','number');
+            _forecastPriceField.className = 'field allowChange';
+            _forecastPriceField.id = `price-field${_forecastIndex}`;
+            _forecastPriceField.defaultValue = forecastObject[_forecastIndex].ForecastPrice;
+            _forecastParent.appendChild(_forecastPriceField);
+        
+            
+            // creating the Total Units field and adding data to it -- missing formula to calculate 
+            // for now the formula only adds the velocity, the factor and multiplies by cost 
+            var _forecastTotalUnitsField = document.createElement('div');
+            _forecastTotalUnitsField.className = 'field';
+            _forecastTotalUnitsField.id = `total-units${_forecastIndex}`;
+            _forecastTotalUnitsField.setAttribute('data-index',_forecastIndex);
+            _forecastTotalUnitsField.innerText = ' ';
+            _forecastParent.appendChild(_forecastTotalUnitsField);
+            
+            
+            // creating the Total Costand adding data to it -- missing formula to calculate 
+            var _forecastTotalCostField = document.createElement('div');
+            _forecastTotalCostField.className = 'field';
+            _forecastTotalCostField.id = `total-cost${_forecastIndex}`;
+            _forecastTotalCostField.innerText = ' ';
+            _forecastParent.appendChild(_forecastTotalCostField);
+            
+        
+            forecastTotalUnitsAndTotalCost(_forecastIndex,_forecastVelocityField.textContent,_forecastPOSStoresField.textContent,_forecastSeasonalFactorField.textContent,_forecastFactorField.value,_forecastManAdjField.value,_forecastCostField.value);
+        };
+        console.log(forecastObject[1].ItemID);
+    for (var w= 0; w < forecastObject.length; w++) {
+        createForecastTableandAddData(w);
+    };
+    
+    });
+    };
+    
+    
+    
 
 // function to create the foecast fields 
-function createForecastRowAndAddData (indIn) {
-    var _forecastIndex = indIn; 
-    // creating some default values 
-    var _defaultAdjustment = 0;
-    var _defaultFactor = 1;
 
-    //getting the parent for the grid 
-    var _forecastParent = document.getElementById('forecast-grid');
-    // creating the WMWeeks and adding data to it 
-    var _forecastWMWeeksField = document.createElement('div');
-    _forecastWMWeeksField.className = 'field';
-    _forecastWMWeeksField.id = `w-weeks${_forecastIndex}`;
-    _forecastWMWeeksField.innerText = forecastObject[_forecastIndex].WMWeekCode;
-    _forecastParent.appendChild(_forecastWMWeeksField);
-
-    // creating the POSStores field and adding data to it
-    var _forecastPOSStoresField = document.createElement('div');
-    _forecastPOSStoresField.className = 'field';
-    _forecastPOSStoresField.id = `pos-store${_forecastIndex}`;
-    _forecastPOSStoresField.innerText = forecastObject[_forecastIndex].ForecastStores;
-    _forecastParent.appendChild(_forecastPOSStoresField);
-
-    // creating the Velocity field and adding data to it
-
-    var _forecastVelocityField = document.createElement('div');
-    _forecastVelocityField.className = 'field';
-    _forecastVelocityField.id = `velocity${_forecastIndex}`;
-    _forecastVelocityField.innerText = forecastObject[_forecastIndex].Velocity;
-    _forecastParent.appendChild(_forecastVelocityField);
-
-    // creating the Seasonality Factor field and adding data to it
-    var _forecastSeasonalFactorField = document.createElement('div');
-    _forecastSeasonalFactorField.className = 'field';
-    _forecastSeasonalFactorField.id = `seasonal-profile${_forecastIndex}`;
-    _forecastSeasonalFactorField.innerText = forecastObject[_forecastIndex].SeasonFactor;
-    _forecastParent.appendChild(_forecastSeasonalFactorField);
-
-    // creating the cost field and adding data to it
-    var _forecastCostField = document.createElement('INPUT');
-    _forecastCostField.setAttribute('type','number');
-    _forecastCostField.className = 'field';
-    _forecastCostField.id = `cost-field${_forecastIndex}`;
-    _forecastCostField.setAttribute ('onChange', `reCalcForecastTotalUnitsAndCost(${_forecastIndex})`);
-    _forecastCostField.defaultValue = 1;
-    _forecastParent.appendChild(_forecastCostField);
-
-    // creating the Manual Adjustment field and adding data to it
-    var _forecastManAdjField = document.createElement('INPUT');
-    _forecastManAdjField.setAttribute('type','number');
-    _forecastManAdjField.className = 'field';
-    _forecastManAdjField.id = `man-adjust${_forecastIndex}`;
-    _forecastManAdjField.setAttribute ('onChange', `reCalcForecastTotalUnitsAndCost(${_forecastIndex})`);
-    _forecastManAdjField.defaultValue = _defaultAdjustment;
-    _forecastParent.appendChild(_forecastManAdjField);
-
-    // creating the Factor field and adding data to it
-    var _forecastFactorField = document.createElement('INPUT');
-    _forecastFactorField.setAttribute('type','number');
-    _forecastFactorField.className = 'field';
-    _forecastFactorField.id = `factor-field${_forecastIndex}`;
-    _forecastFactorField.setAttribute ('onChange', `reCalcForecastTotalUnitsAndCost(${_forecastIndex})`);
-    _forecastFactorField.defaultValue = _defaultFactor;
-    _forecastParent.appendChild(_forecastFactorField);
-
-    // creating the price field 
-    var _forecastPriceField = document.createElement('INPUT');
-    _forecastPriceField.setAttribute('type','number');
-    _forecastPriceField.className = 'field';
-    _forecastPriceField.id = `price-field${_forecastIndex}`;
-    _forecastPriceField.defaultValue = forecastObject[_forecastIndex].ForecastPrice;
-    _forecastParent.appendChild(_forecastPriceField);
-
-    
-    // creating the Total Units field and adding data to it -- missing formula to calculate 
-    // for now the formula only adds the velocity, the factor and multiplies by cost 
-    var _forecastTotalUnitsField = document.createElement('div');
-    _forecastTotalUnitsField.className = 'field';
-    _forecastTotalUnitsField.id = `total-units${_forecastIndex}`;
-    _forecastTotalUnitsField.setAttribute('data-index',_forecastIndex);
-    _forecastTotalUnitsField.innerText = ' ';
-    _forecastParent.appendChild(_forecastTotalUnitsField);
-    
-    
-    // creating the Total Costand adding data to it -- missing formula to calculate 
-    var _forecastTotalCostField = document.createElement('div');
-    _forecastTotalCostField.className = 'field';
-    _forecastTotalCostField.id = `total-cost${_forecastIndex}`;
-    _forecastTotalCostField.innerText = ' ';
-    _forecastParent.appendChild(_forecastTotalCostField);
-    
-
-    forecastTotalUnitsAndTotalCost(_forecastIndex,_forecastVelocityField.textContent,_forecastPOSStoresField.textContent,_forecastSeasonalFactorField.textContent,_forecastFactorField.value,_forecastManAdjField.value,_forecastCostField.value);
-};
 
 //this function will calculate total units the first time the page loads 
 function forecastTotalUnitsAndTotalCost (index,velocity,stores,seasonalFactor,factor, manuaAdjust, cost) {
@@ -600,7 +558,7 @@ var dataArray = [];
 labelsArray.length = 0;
 dataArray.length = 0;
 
-for (var y = 0; y <= 4; y++) {
+for (var y = 0; y < 52; y++) {
     let totalUnits = document.getElementById(`total-units${y}`).textContent;
     let walmarweek = document.getElementById(`w-weeks${y}`).textContent;
     dataArray.push(totalUnits);
