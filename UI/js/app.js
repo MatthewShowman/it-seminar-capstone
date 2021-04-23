@@ -254,8 +254,10 @@ async function getCurrentRow (_clickedId) {
     };
     // creating a new object 
     var currentRowObject = new currentRow (_itemIdFromRow);
+    let id = currentRowObject.ItemID; 
     alert ("Forecast succesful. Please proceed to the forecast tab to revise.");
-    console.log(currentRowObject);
+    console.log(id);
+    fetchHistoricalData(id);
     //-------------------------- !!!! ------------------------------------
     // theres a funtion that needs to run everytime the forecast is hit!!!
 
@@ -267,7 +269,7 @@ async function getCurrentRow (_clickedId) {
 // on load do all this 
 window.onload = function () {
     hideProfileFields();
-    fetchHistoricalData(2);
+    fetchHistoricalData(1);
     let indexOf = 0;
     let idOf = 0;
     let forecastInd = 0;
