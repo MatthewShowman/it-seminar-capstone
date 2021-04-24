@@ -1,34 +1,12 @@
 # it-seminar-capstone
 
-Needed flows:
+Step 1: Load the DB Structure: Run the CREATE statements in the CREATE_TABLE_Commands.sql file in the SQL Scripts directory.
 
-1.  Get forecast for an existing item 
+Step 2: Load the initial data: The scripts to do this are in the INSERT_INTO_commands.sql file in the SQL Scripts directory.
+        This is all masked data, not data from a real client.
 
-    Choose client
-    Choose item
-    Request forecast
-        Update the Walmart week if needed.
-        Update the forecast if needed.
+Step 3. Run "npm install" in a terminal to install all the needed dependencies.
 
+Step 4. Update mssql.utils.js with the connection string needed for the DB
 
-
-2.  Add a new item
-
-    Choose client
-    Choose 'add new item'
-    Complete the needed fields
-        Update item list
-        Create new forecast
-
-
-
-3.  Create a new profile
-
-    Choose client
-    Choose 'view profiles'
-    Choose 'add new profile'
-    Complete needed fields
-
-
-
-4. 
+Step 5. In the terminal, run "npm start" to start the backend API
