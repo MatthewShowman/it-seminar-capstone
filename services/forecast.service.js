@@ -34,32 +34,6 @@ function baseForecastBuilder(itemID, week, velocity, price, stores, leadTime) {
 // Backend Services
 
 
-async function getTotalForecastCount(itemID) {
-    try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, itemID)
-            .query('SELECT COUNT(*) AS TotalForecasts FROM ForecastWHERE ItemID = @IdParam');
-        return item.recordsets[0][0].TotalForecasts;
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
-async function getUpcomingForecastCount(itemID) {
-    try {
-        let pool = await sql.connect(config);
-        let item = await pool.request()
-            .input('IdParam', sql.Int, itemID)
-            .query('SELECT COUNT(*) AS NumberOfForecasts FROM Forecast f JOIN WMWeek w ON f.WMWeekCode = w.WMWeekCode WHERE ItemID = @IdParam AND w.CalStartDate >= DATEADD(week, -1, GETDATE())');
-        return item.recordsets[0][0].NumberOfForecasts;
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
 async function getForecastCount(itemID, year) {
     try {
         let pool = await sql.connect(config);
