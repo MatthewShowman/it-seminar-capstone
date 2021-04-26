@@ -553,19 +553,80 @@ async function saveForecast () {
 //the plot button 
 // -- this is for IAN 
 async function plotGraph () {
+
+// getting the metric elements 
+
+const METRIC1 = document.getElementById('metric-1');
+const METRIC2 = document.getElementById('metric-2');
+const METRIC3 = document.getElementById('metric-3');
+const METRIC4 = document.getElementById('metric-4');
 // empty arrays for the data coming in 
 var labelsArray = [];
 var dataArray = [];
+var pricesArray =[];
+var costArray = [];
+var storeArray = [];
+var velocityArray = [];
 // setting arrays back to 0 length to avoid 
 labelsArray.length = 0;
 dataArray.length = 0;
+pricesArray.length = 0;
+costArray.length = 0;
+storeArray.length = 0;
+velocityArray.length = 0;
 
 for (var y = 0; y < 52; y++) {
     let totalUnits = document.getElementById(`total-units${y}`).textContent;
     let walmarweek = document.getElementById(`w-weeks${y}`).textContent;
+    let prices = document.getElementById(`price-field${y}`).value;
+    let pricesFl = parseFloat (prices);
+    let costs = document.getElementById(`cost-field${y}`).value;
+    let costsFl = parseFloat (costs);
+    let stores = document.getElementById(`pos-store${y}`).textContent;
+    let storesFl = parseFloat(stores);
+    let velocity = document.getElementById(`velocity${y}`).textContent;
+    let velocityFl = parseFloat (velocity);
     dataArray.push(totalUnits);
-    labelsArray.push(walmarweek);  
+    labelsArray.push(walmarweek);
+    pricesArray.push(pricesFl);
+    costArray.push(costsFl);
+    storeArray.push(storesFl);
+    velocityArray.push(velocityFl);
 };
+
+// calculating the averages 
+// average price
+var sumPrice = pricesArray.reduce(function(a,b) {
+    return a + b;
+});
+
+var averagePrice = (sumPrice/52).toFixed(2); 
+METRIC1.textContent = '$ ' + averagePrice; 
+
+// average cost
+var sumCost = costArray.reduce(function(c,d) {
+    return c + d;
+});
+
+var averageCost = (sumCost/52).toFixed(2);
+METRIC2.textContent = '$ '+ averageCost;
+
+// average # stores
+var sumStores = storeArray.reduce(function(e,f) {
+    return e + f;
+});
+
+var averageStores = (sumStores/52).toFixed(2); 
+METRIC3.textContent = averageStores;
+//average Velocity 
+var sumVelocity = velocityArray.reduce(function(g,h) {
+    return g + h;
+});
+
+var averageVelocity = (sumVelocity/52).toFixed(2); 
+METRIC4.textContent = averageVelocity;
+
+
 
 
 
@@ -730,7 +791,18 @@ var profileName = document.getElementById('profile-name-in').value;
 var profileObjectNew = new profileObject (profileClientID,profileName);
 alert ('Changes saved! Safe to move forward now..');
 console.log(profileObjectNew, profileObjectsArray);
-return [profileObjectNew, profileObjectsArray];
+// this will post the data to the server 
+// currently showing an error to be worked on later in the development 
+// const data = {profileObjectNew, profileObjectsArray};
+// const options2 = {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify(data)
+// };
+// fetch ('/profiles/update/',options2)
+
 
 };
 

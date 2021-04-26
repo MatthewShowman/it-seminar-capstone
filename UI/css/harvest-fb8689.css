@@ -881,6 +881,7 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  flex-direction: column;
   min-height: 50px;
   padding: 10px 15px;
   -webkit-box-pack: center;
@@ -1147,4 +1148,7 @@
 }
 .btn.spaceabove.w-inline-block{
   margin-top: 40px;
+}
+.text-block-6.headertext.blue {
+  color: #14458c;
 }
