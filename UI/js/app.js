@@ -1,6 +1,36 @@
-const options = {
-    method: 'GET',
+// import {getItemHistory} from './config.js';
+
+//Getting the save button 
+const SAVEITEM = document.getElementById('save-btn-item');
+
+//Gettin the new item button 
+const NEWITEMBTN = document.getElementById('new-item-btn');
+//Gettin the close new item button 
+const CLOSEMODAL = document.getElementById('close-modal');
+//Getting the forecast buttons 
+const FORECASTBTN = document.querySelectorAll('.field.forecast');
+// getting the add new item btn 
+const ADDNEWITEMBTN = document.getElementById('add-new-item-btn');
+//Event listeners for the buttons
+NEWITEMBTN.addEventListener('click', showAddNewItemModal);
+CLOSEMODAL.addEventListener('click',closeAddNewItemModal);
+ADDNEWITEMBTN.addEventListener('click', addNewItemToDataBase);
+// getting the modal element 
+const MODAL = document.getElementById('modal-overlay');
+//function to show the modal
+async function showAddNewItemModal () {
+    MODAL.classList.remove('hidden');
 };
+
+//function to close the modal 
+async function closeAddNewItemModal () {
+    MODAL.classList.add('hidden');
+};
+// function to add new item to db 
+async function addNewItemToDataBase () {
+    closeAddNewItemModal();
+    //add functionality here to fetch post 
+}
 
 
 
@@ -9,7 +39,9 @@ const options = {
 //--------------------------------------------------------------------------------------------
 
 // options for fetching the data 
-
+const options = {
+    method: 'GET',
+};
 
 
 // .then ((data) => {
@@ -238,7 +270,6 @@ async function getCurrentRow (_clickedId) {
 window.onload = function () {
     hideProfileFields();
     fetchHistoricalData(1);
-    showChooseClientModal();
     let indexOf = 0;
     let idOf = 0;
     let forecastInd = 0;
@@ -296,7 +327,7 @@ async function saveAllItemData () {
 //------------------------------ Forecast Tab -------------------------------------------------
 //--------------------------------------------------------------------------------------------
 // async function to fetch the historical data :: parameter is the ID of the item 
-async function fetchHistoricalData (idIn, clientIDIn){
+async function fetchHistoricalData (idIn){
     // wait for the fletch to complete 
     await fetch (`/products/forecast/${idIn}`,options)
     .then (result => result.json())

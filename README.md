@@ -10,3 +10,13 @@ Step 3. Run "npm install" in a terminal to install all the needed dependencies.
 Step 4. Update mssql.utils.js with the connection string needed for the DB
 
 Step 5. In the terminal, run "npm start" to start the backend API
+
+# Front End:
+
+** The routing to the server is nor complete. The posts and fetching of some data is critical to continue developing 
+
+Step 1: Initial Setup: connect to the MSSQL instance using the correct credentials
+
+Step 2: Run the command 'nodemon index.js' in the command line within the project folder 
+
+Step 3: on your browser, navigate to localhost:3000 to view the UI
