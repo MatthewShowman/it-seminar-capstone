@@ -732,7 +732,7 @@ alert ('Changes saved! Safe to move forward now..');
 console.log(profileObjectNew, profileObjectsArray);
 return [profileObjectNew, profileObjectsArray];
 
-}
+};
 
 
 
