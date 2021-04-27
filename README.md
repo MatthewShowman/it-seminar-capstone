@@ -1,5 +1,7 @@
 # it-seminar-capstone
 
+# Back End
+
 Step 1: Load the DB Structure: Run the CREATE statements in the CREATE_TABLE_Commands.sql file in the SQL Scripts directory.
 
 Step 2: Load the initial data: The scripts to do this are in the INSERT_INTO_commands.sql file in the SQL Scripts directory.
