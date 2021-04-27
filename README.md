@@ -1,6 +1,6 @@
 # it-seminar-capstone
 
-# Back End
+# Back End - Matthew Showman
 
 Step 1: Load the DB Structure: Run the CREATE statements in the CREATE_TABLE_Commands.sql file in the SQL Scripts directory.
 
@@ -13,7 +13,7 @@ Step 4. Update mssql.utils.js with the connection string needed for the DB
 
 Step 5. In the terminal, run "npm start" to start the backend API
 
-# Front End:
+# Front End UI - Alejandro Jordan Bojanic
 
 ** The routing to the server is nor complete. The posts and fetching of some data is critical to continue developing 
 
